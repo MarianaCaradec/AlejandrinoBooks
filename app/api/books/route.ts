@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
         try {
             const { searchParams } = new URL(req.url);
             const pageInt = parseInt(searchParams.get("page") || "1", 10);
-            const limitInt = parseInt(searchParams.get("limit") || "10", 10);
+            const limitInt = parseInt(searchParams.get("limit") || "5", 10);
         
             if (isNaN(pageInt) || isNaN(limitInt) || pageInt < 1 || limitInt < 1) {
                 return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });

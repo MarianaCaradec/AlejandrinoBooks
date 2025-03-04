@@ -12,7 +12,7 @@ export default function Books() {
 
   useEffect(() => {
     const getBooks = async () => {
-      const data = await fetchBooks(currentPage, 10);
+      const data = await fetchBooks(currentPage, 5);
       if (data) {
         setBooks(data.booksFromDb);
         setTotalPages(data.totalPages);
