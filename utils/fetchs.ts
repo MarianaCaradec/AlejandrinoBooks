@@ -1,11 +1,12 @@
 import { BookWithCategory, CategoryWithBooks } from "@/lib/prisma";
-import { Book, Category, } from "@prisma/client";
 
-export const fetchBooks = async () => {
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+export const fetchBooks = async (page = 1, limit = 10) => {
     try {
-        const res = await fetch("/api/books");
-        const booksFromDb = await res.json();
-        return booksFromDb
+        const res = await fetch(`${API_URL}/api/books?page=${page}&limit=${limit}`);
+        const booksPagination = await res.json();
+        return booksPagination
         } catch (error) {
         console.error("Error fetching books:", error);
     };
