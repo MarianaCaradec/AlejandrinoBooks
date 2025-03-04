@@ -2,7 +2,7 @@ import { BookWithCategory, CategoryWithBooks } from "@/lib/prisma";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-export const fetchBooks = async (page = 1, limit = 10) => {
+export const fetchBooks = async (page = 1, limit = 5) => {
     try {
         const res = await fetch(`${API_URL}/api/books?page=${page}&limit=${limit}`);
         const booksPagination = await res.json();
