@@ -7,16 +7,41 @@ import { useEffect, useState } from "react";
 export default function Books() {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
     const getBooks = async () => {
-      const data = await fetchBooks();
-      setBooks(data);
-      setLoading(false);
+      const data = await fetchBooks(currentPage, 10);
+      if (data) {
+        setBooks(data.booksFromDb);
+        setTotalPages(data.totalPages);
+        setCurrentPage(data.currentPage);
+        setLoading(false);
+      }
     };
 
     getBooks();
-  }, []);
+  }, [currentPage]);
+
+  const paginationHandler = (action: "prev" | "next") => {
+    setCurrentPage((page) => {
+      let newPage = page;
+
+      switch (true) {
+        case action === "prev" && page > 1:
+          newPage = page - 1;
+          break;
+        case action === "next" && page < totalPages:
+          newPage = page + 1;
+          break;
+        default:
+          break;
+      }
+
+      return newPage;
+    });
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -44,6 +69,24 @@ export default function Books() {
               </li>
             ))}
         </ul>
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={() => paginationHandler("prev")}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-800 text-white rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <p>{currentPage}</p>
+          <button
+            onClick={() => paginationHandler("next")}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-800 text-white rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+          <p>{totalPages}</p>
+        </div>
       </main>
     </div>
   );
