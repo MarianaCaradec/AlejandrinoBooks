@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server"
 import {prisma} from '@/lib/prisma'
 
 export async function GET(req: NextRequest) {
-    if(req.method === "GET") {
         try {
             const { searchParams } = new URL(req.url);
             const pageInt = parseInt(searchParams.get("page") || "1", 10);
@@ -32,8 +31,7 @@ export async function GET(req: NextRequest) {
                 { error: error instanceof Error ? error.message : "Error desconocido al encontrar los libros" },
                 {status: 500}
             )
-        }   
-    }
+        }  
 }
 
 export async function POST(req: Request) {
