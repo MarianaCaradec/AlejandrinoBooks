@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
             const booksFromDb = await prisma.book.findMany({
                 skip: (pageInt - 1) * limitInt,
-                take: limitInt,
+                take: limitInt
             })
 
             const totalBooks = await prisma.book.count()
