@@ -85,15 +85,15 @@ export default function Books() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 py-20">
+    <div className="max-w-4xl mx-auto p-6">
       <main>
-        <h1 className="text-3xl font-bold text-[#D4B483] mb-6">Books</h1>
+        <h1 className="text-3xl font-bold text-white-900 mb-6">Books</h1>
         <select
           onChange={(e) => {
             setCategoryId(e.target.value);
           }}
           value={categoryId}
-          className="bg-[#53917E] text-[#E4DFDA] p-4 rounded-lg shadow-md hover:shadow-lg hover:cursor-pointer transition"
+          className="bg-black p-4 rounded-lg shadow-md hover:shadow-lg transition"
         >
           <option value={""}>Todos</option>
           {categories &&
@@ -103,7 +103,7 @@ export default function Books() {
               </option>
             ))}
         </select>
-        <ul className="space-y-4 py-4">
+        <ul className="space-y-4">
           {books && books.length > 0 ? (
             books.map((book) => (
               <li
@@ -112,15 +112,12 @@ export default function Books() {
               >
                 <Link
                   href={`/books/${book.id}`}
-                  className="block text-xl font-semibold hover:text-[#53917E]"
+                  className="block text-xl font-semibold text-white-600 hover:text-orange-800"
                 >
                   {book.title}
                 </Link>
-                <p className="text-[#53917E]">Author: </p>
-                <p>{book.author}</p>
-                <p className="text-[#53917E] text-sm">
-                  {book.price.toString()}
-                </p>
+                <p className="text-gray-500">Author: {book.author}</p>
+                <p className="text-gray-500 text-sm">{book.price.toString()}</p>
               </li>
             ))
           ) : (
@@ -132,19 +129,19 @@ export default function Books() {
             <button
               onClick={() => paginationHandler("prev")}
               disabled={currentPage === 1}
-              className="px-4 py-2 bg-[#D4B483] text-black rounded disabled:opacity-50"
+              className="px-4 py-2 bg-gray-800 text-white rounded disabled:opacity-50"
             >
               Previous
             </button>
-            <p className="text-[#53917E]">{currentPage}</p>
+            <p>{currentPage}</p>
             <button
               onClick={() => paginationHandler("next")}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-[#D4B483] text-black rounded disabled:opacity-50"
+              className="px-4 py-2 bg-gray-800 text-white rounded disabled:opacity-50"
             >
               Next
             </button>
-            <p className="text-[#53917E]">{totalPages}</p>
+            <p>{totalPages}</p>
           </div>
         )}
       </main>

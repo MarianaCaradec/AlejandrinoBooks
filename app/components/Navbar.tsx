@@ -2,20 +2,26 @@ import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <nav className="bg-black shadow-md p-4 flex justify-between items-center fixed top-0 left-0 w-full z-50 bg-black/70 backdrop-blur-md">
+    <nav className="bg-black shadow-md p-4 flex justify-between items-center">
       <div>
         <Link
           href="/"
-          className="text-[#E4DFDA] hover:text-[#53917E] font-semibold"
+          className="text-white-600 hover:text-orange-800 font-semibold"
         >
           Landing page
         </Link>
       </div>
       <div className="flex space-x-4">
-        <Link href="/books" className="text-[#E4DFDA] hover:text-[#53917E]">
+        <Link href="/books" className="text-white-700 hover:text-orange-900">
           Books
         </Link>
-        <Link href="/profile" className="text-[#E4DFDA] hover:text-[#53917E]">
+        <Link
+          href="/categories"
+          className="text-white-700 hover:text-orange-900"
+        >
+          Categories
+        </Link>
+        <Link href="/profile" className="text-white-700 hover:text-orange-900">
           My profile
         </Link>
       </div>
