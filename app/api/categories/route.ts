@@ -3,13 +3,13 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
     try {
-        const categoryFromDb = await prisma.category.findMany({
+        const categoriesFromDb = await prisma.category.findMany({
             include: {
                 books: true
             }
         })
 
-        return NextResponse.json(categoryFromDb, {status: 200})
+        return NextResponse.json(categoriesFromDb, {status: 200})
     } catch (error) {
         return NextResponse.json(
             {error: "Error al obtener las categorías de libros"},
