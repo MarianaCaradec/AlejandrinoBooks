@@ -9,17 +9,17 @@ interface AccountProps {
 
 export default function Card({ name, avatar, email, desc }: AccountProps) {
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white p-6">
-      <h1 className="text-xl font-semibold text-gray-800">{name}</h1>
+    <div className="flex flex-col items-center justify-center">
+      <h1 className="mt-4 text-xl font-semibold text-[#D4B483]">{name}</h1>
       <Image
         src={avatar}
         alt={name}
-        width="600"
-        height="500"
-        className="w-full h-64 object-cover mt-4 rounded-lg"
+        width="200"
+        height="300"
+        className="object-cover mt-4 rounded-lg"
       />
-      <h2 className="text-lg text-gray-600 mt-4">{email}</h2>
-      <p className="text-gray-500 mt-2">{desc}</p>
+      <h2 className="text-[#D4B483] p-3">{email}</h2>
+      <p className="text-center text-[#E4DFDA]">{desc}</p>
     </div>
   );
 }
