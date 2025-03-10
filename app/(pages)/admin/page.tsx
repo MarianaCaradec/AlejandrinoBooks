@@ -35,13 +35,6 @@ const AdminPage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log("📦 Datos del libro antes de enviar:", newBook);
-
-    if (!newBook) {
-      console.error("🚨 Error: newBook es null o undefined");
-      return;
-    }
-
     try {
       const res = await fetch("/api/books", {
         method: "POST",
@@ -54,12 +47,12 @@ const AdminPage = () => {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || "Error al agregar el libro");
+        console.error("Error al agregar el libro:", errorData.error);
+        return;
       }
 
       const data = await res.json();
       setBooks([data, ...books]);
-      console.log("Libro agregado:", data);
     } catch (error) {
       console.error(error);
     }
@@ -108,6 +101,26 @@ const AdminPage = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  const handleDelete = async (bookId: string) => {
+    try {
+      const res = await fetch(`/api/books/${bookId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Error al eliminar el libro:", errorData.error);
+        return;
+      }
+
+      setBooks((prevBooks) => prevBooks.filter((b) => b.id !== bookId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 py-20">
@@ -216,7 +229,12 @@ const AdminPage = () => {
                 <p className="text-[#53917E] text-sm">
                   {book.price.toString()}
                 </p>
-                <button>Delete book</button>
+                <button
+                  onClick={() => handleDelete(book.id)}
+                  className="bg-[#D4B483] text-black text-xl font-bold rounded-md p-3 my-2"
+                >
+                  Delete book
+                </button>
               </li>
             ))
           ) : (
