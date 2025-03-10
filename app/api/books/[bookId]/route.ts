@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import {BookWithCategory, prisma} from '@/lib/prisma'
+import { Decimal } from "@prisma/client/runtime/index-browser.js";
 
 export async function GET(
     req: NextResponse,
@@ -45,9 +46,9 @@ export async function PUT(
                     author: body.author,
                     resume: body.resume,
                     description: body.description,
-                    price: body.price,
+                    price: new Decimal(body.price),
                     categoryId: body.categoryId,
-                    stock: body.stock
+                    stock: Number(body.stock)
                 }
             })
 
