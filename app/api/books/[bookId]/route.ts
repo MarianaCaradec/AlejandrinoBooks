@@ -24,7 +24,7 @@ export async function GET(
             return NextResponse.json(book, {status: 200})
         } catch (error) {
             return NextResponse.json(
-                {error: "Error al encontrar el libro solicitado"},
+                { error: error instanceof Error ? error.message : "Error desconocido al encontrar el libro solicitado" },
                 {status: 500}
             )
         }
@@ -55,7 +55,7 @@ export async function PUT(
             return NextResponse.json(updatedBook, {status: 200})
         } catch (error) {
             return NextResponse.json(
-                {error: "No fue posible actualizar el libro declarado"},
+                { error: error instanceof Error ? error.message : "Error desconocido al actualizar el libro" },
                 {status: 500}
             )
         }
@@ -75,7 +75,7 @@ export async function DELETE(
             return NextResponse.json({message: `El libro ${bookToBeDeleted.title} fue eliminado correctamente`}, {status: 200})
         } catch (error) {            
             return NextResponse.json(
-                {error: "Error al eliminar el libro solicitado"},
+                { error: error instanceof Error ? error.message : "Error desconocido al eliminar el libro" },
                 {status: 500}
             )
         }
