@@ -1,5 +1,5 @@
 "use client";
-import { Book } from "@prisma/client";
+import { book } from "@prisma/client";
 import { fetchBooks, fetchCategories } from "@/utils/fetchs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
