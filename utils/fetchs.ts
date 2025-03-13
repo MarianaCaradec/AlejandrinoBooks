@@ -2,26 +2,19 @@ import { BookWithCategory, CategoryWithBooks } from "@/lib/prisma";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-export const fetchBooks = async (page = 1, limit = 5) => {
+export const fetchBooks = async (page = 1, limit = 5, categoryId?: string, search?: string) => {
     try {
-        const res = await fetch(`${API_URL}/api/books?page=${page}&limit=${limit}`);
+        const categoryQuery = categoryId ? `&categoryId=${categoryId}` : "";
+        const searchQuery = search ? `&search=${search}` : "";
+
+        const res = await fetch(`${API_URL}/api/books?page=${page}&limit=${limit}${categoryQuery}${searchQuery}`);
+        
         const booksPagination = await res.json()
         return booksPagination
         } catch (error) {
         console.error("Error fetching books:", error);
-        return []
+        return { booksFromDb: [], totalBooks: 0, totalPages: 1, currentPage: 1 };
     };
-}
-
-export const fetchBooksByCategory = async (categoryId: string): Promise<BookWithCategory[] | null> => {
-    try {
-        const res = await fetch(`${API_URL}/api/books/byCategory?categoryId=${categoryId}`)
-        const booksByCategory: BookWithCategory[] = await res.json()
-        return booksByCategory
-    } catch (error) {
-        console.error("Error fetching books by category:", error);
-        return []
-    }
 }
 
 export const fetchBook = async (bookId: string): Promise<BookWithCategory | null> => {
