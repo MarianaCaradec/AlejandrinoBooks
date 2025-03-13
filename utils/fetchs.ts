@@ -19,7 +19,7 @@ export const fetchBooks = async (page = 1, limit = 5, categoryId?: string, searc
 
 export const fetchBook = async (bookId: string): Promise<BookWithCategory | null> => {
     try {
-        const res = await fetch(`/api/books/${bookId}`);
+        const res = await fetch(`${API_URL}/api/books/${bookId}`);
         const bookFromDb: BookWithCategory = await res.json();
         return bookFromDb
     } catch (error) {
@@ -30,7 +30,7 @@ export const fetchBook = async (bookId: string): Promise<BookWithCategory | null
 
 export const fetchCategories = async (): Promise<CategoryWithBooks[] | null> => {
     try {
-        const res = await fetch("/api/categories");
+        const res = await fetch(`${API_URL}/api/categories`);
         const categoriesFromDb: CategoryWithBooks[] = await res.json();
         return categoriesFromDb
     } catch (error) {
@@ -41,7 +41,7 @@ export const fetchCategories = async (): Promise<CategoryWithBooks[] | null> => 
 
 export const fetchCategory = async (categoryId: string): Promise<CategoryWithBooks | null> => {
     try {
-        const res = await fetch(`/api/categories/${categoryId}`)
+        const res = await fetch(`${API_URL}/api/categories/${categoryId}`)
         const categoryFromDb: CategoryWithBooks = await res.json()
         return categoryFromDb
     } catch (error) {

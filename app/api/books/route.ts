@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import {prisma} from '@/lib/prisma'
-import { Prisma } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/index-browser.js";
 
 export async function GET(req: NextRequest) {
         try {
@@ -60,18 +60,19 @@ export async function GET(req: NextRequest) {
 export async function POST(req: Request) {
     try {
         const body = await req.json()
+
         const newBook = await prisma.book.create({
             data: {
                 title: body.title,
                 author: body.author,
                 resume: body.resume,
                 description: body.description,
-                price: body.price,
+                price: new Decimal(body.price),
                 categoryId: body.categoryId,
-                stock: body.stock
+                stock: Number(body.stock)
             }
         })
-
+        console.log("✅ Libro creado:", newBook);
     return NextResponse.json(newBook, {status: 201})
     } catch (error) {
         return NextResponse.json(
