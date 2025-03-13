@@ -1,5 +1,5 @@
 "use client";
-import { Book } from "@prisma/client";
+import { book } from "@prisma/client";
 import {
   fetchBooks,
   fetchBooksByCategory,
@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { CategoryWithBooks } from "@/lib/prisma";
 
 export default function Books() {
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<book[]>([]);
   const [categoryId, setCategoryId] = useState<string>("");
   const [categories, setCategories] = useState<CategoryWithBooks[] | null>(
     null
