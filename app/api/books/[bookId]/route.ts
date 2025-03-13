@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import {BookWithCategory, prisma} from '@/lib/prisma'
+import {BookWithCategory, prisma} from '@/app/lib/prisma'
 import { Decimal } from "@prisma/client/runtime/index-browser.js";
 
 export async function GET(

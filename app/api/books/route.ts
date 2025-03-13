@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import {prisma} from '@/lib/prisma'
+import {prisma} from '@/app/lib/prisma'
 import { Decimal } from "@prisma/client/runtime/index-browser.js";
 import { Prisma } from "@prisma/client";
 

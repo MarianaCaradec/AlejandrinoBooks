@@ -3,7 +3,7 @@ import { book } from "@prisma/client";
 import { fetchBooks, fetchCategories } from "@/utils/fetchs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { CategoryWithBooks } from "@/lib/prisma";
+import { CategoryWithBooks } from "@/app/lib/prisma";
 import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Books() {
