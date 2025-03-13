@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import {BookWithCategory, prisma} from '@/lib/prisma'
+import { Decimal } from "@prisma/client/runtime/index-browser.js";
 
 export async function GET(
     req: NextResponse,
@@ -23,7 +24,7 @@ export async function GET(
             return NextResponse.json(book, {status: 200})
         } catch (error) {
             return NextResponse.json(
-                {error: "Error al encontrar el libro solicitado"},
+                { error: error instanceof Error ? error.message : "Error desconocido al encontrar el libro solicitado" },
                 {status: 500}
             )
         }
@@ -45,16 +46,16 @@ export async function PUT(
                     author: body.author,
                     resume: body.resume,
                     description: body.description,
-                    price: body.price,
+                    price: new Decimal(body.price),
                     categoryId: body.categoryId,
-                    stock: body.stock
+                    stock: Number(body.stock)
                 }
             })
 
             return NextResponse.json(updatedBook, {status: 200})
         } catch (error) {
             return NextResponse.json(
-                {error: "No fue posible actualizar el libro declarado"},
+                { error: error instanceof Error ? error.message : "Error desconocido al actualizar el libro" },
                 {status: 500}
             )
         }
@@ -74,7 +75,7 @@ export async function DELETE(
             return NextResponse.json({message: `El libro ${bookToBeDeleted.title} fue eliminado correctamente`}, {status: 200})
         } catch (error) {            
             return NextResponse.json(
-                {error: "Error al eliminar el libro solicitado"},
+                { error: error instanceof Error ? error.message : "Error desconocido al eliminar el libro" },
                 {status: 500}
             )
         }

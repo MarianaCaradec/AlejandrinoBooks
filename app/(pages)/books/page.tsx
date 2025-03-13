@@ -1,13 +1,10 @@
 "use client";
-import { book } from "@prisma/client";
-import {
-  fetchBooks,
-  fetchBooksByCategory,
-  fetchCategories,
-} from "@/utils/fetchs";
+import { Book } from "@prisma/client";
+import { fetchBooks, fetchCategories } from "@/utils/fetchs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CategoryWithBooks } from "@/lib/prisma";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Books() {
   const [books, setBooks] = useState<book[]>([]);
@@ -15,9 +12,13 @@ export default function Books() {
   const [categories, setCategories] = useState<CategoryWithBooks[] | null>(
     null
   );
+  const [inputSearch, setInputSearch] = useState<string>("");
   const [totalPages, setTotalPages] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const searchParams = useSearchParams();
+  const pathName = usePathname();
 
   useEffect(() => {
     const getCategories = async () => {
@@ -25,31 +26,46 @@ export default function Books() {
         const data = await fetchCategories();
         setCategories(data);
       } catch (error) {
-        console.error("Error fetching books:", error);
+        console.error("Error fetching categories:", error);
       }
-      setLoading(false);
     };
 
     getCategories();
   }, []);
 
-  useEffect(() => {
-    if (categoryId == undefined) return;
+  const updateUrlParams = (key: string, value: string | null) => {
+    const params = new URLSearchParams(searchParams);
 
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+
+    window.history.pushState(null, "", `${pathName}?${params.toString()}`);
+  };
+
+  useEffect(() => {
     const getData = async () => {
       try {
-        let data;
+        const queryParams = new URLSearchParams();
 
-        if (categoryId) {
-          data = await fetchBooksByCategory(categoryId);
-        } else {
-          data = await fetchBooks(currentPage, 5);
-        }
+        if (inputSearch) queryParams.set("search", inputSearch);
+        if (categoryId) queryParams.set("categoryId", categoryId);
+
+        const data = await fetchBooks(
+          currentPage,
+          5,
+          categoryId || undefined,
+          inputSearch || undefined
+        );
 
         if (data) {
-          setBooks(data.booksFromDb || data);
+          setBooks(data.booksFromDb);
           setTotalPages(data.totalPages);
-          setCurrentPage(data.currentPage);
+          if (currentPage !== data.currentPage) {
+            setCurrentPage(data.currentPage);
+          }
         }
       } catch (error) {
         console.error("Error fetching books:", error);
@@ -59,7 +75,7 @@ export default function Books() {
     };
 
     getData();
-  }, [currentPage, categoryId]);
+  }, [currentPage, searchParams]);
 
   const paginationHandler = (action: "prev" | "next") => {
     setCurrentPage((page) => {
@@ -75,7 +91,7 @@ export default function Books() {
         default:
           break;
       }
-
+      updateUrlParams("page", newPage.toString());
       return newPage;
     });
   };
@@ -84,13 +100,57 @@ export default function Books() {
     return <div>Loading...</div>;
   }
 
+  const handleSelect = (categoryId: string) => {
+    setCategoryId(categoryId);
+    updateUrlParams("categoryId", categoryId || null);
+  };
+
+  const handleSearch = (input: string) => {
+    setInputSearch(input);
+    updateUrlParams("search", input || null);
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6 py-20">
       <main>
         <h1 className="text-3xl font-bold text-[#D4B483] mb-6">Books</h1>
+        <div className="flex items-center justify-center gap-3 py-5">
+          <input
+            placeholder="search by title, author or category"
+            name="text"
+            type="text"
+            onChange={(e) => handleSearch(e.target.value)}
+            value={inputSearch}
+            className="bg-[#D4B483] text-black text-lg rounded-md placeholder-black p-4 w-full max-w-md"
+          />
+          <button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              height="25px"
+              width="25px"
+            >
+              <path
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                strokeWidth={1.5}
+                stroke="#D4B483"
+                d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+              />
+              <path
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                strokeWidth={1.5}
+                stroke="#D4B483"
+                d="M22 22L20 20"
+              />
+            </svg>
+          </button>
+        </div>
         <select
           onChange={(e) => {
-            setCategoryId(e.target.value);
+            handleSelect(e.target.value);
           }}
           value={categoryId}
           className="bg-[#53917E] text-[#E4DFDA] p-4 rounded-lg shadow-md hover:shadow-lg hover:cursor-pointer transition"
@@ -127,7 +187,7 @@ export default function Books() {
             <p>No hay libros disponibles</p>
           )}
         </ul>
-        {books.length > 0 && totalPages > 1 && (
+        {Array.isArray(books) && books.length > 0 && totalPages > 1 && (
           <div className="flex items-center justify-center gap-3">
             <button
               onClick={() => paginationHandler("prev")}
