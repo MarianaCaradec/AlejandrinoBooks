@@ -1,4 +1,4 @@
-import { BookWithCategory, CategoryWithBooks } from "@/lib/prisma";
+import { BookWithCategory, CategoryWithBooks } from "@/app/lib/prisma";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
