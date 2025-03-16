@@ -155,7 +155,7 @@ export default function Books() {
           value={categoryId}
           className="bg-[#53917E] text-[#E4DFDA] p-4 rounded-lg shadow-md hover:shadow-lg hover:cursor-pointer transition"
         >
-          <option value={""}>Todos</option>
+          <option value={""}>All books</option>
           {categories &&
             categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
