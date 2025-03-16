@@ -26,15 +26,7 @@ export default function Login() {
       </h2>
       <div className="flex flex-col items-center gap-6">
         <form
-          action={async (formData) => {
-            if (isRegistered) {
-              console.log("Form submitted");
-              await loginAction(formData);
-            } else {
-              await registerAction(formData);
-              await loginAction(formData);
-            }
-          }}
+          action={isRegistered ? loginAction : registerAction}
           className="bg-[#D4B483] p-10 rounded-md w-full max-w-md"
         >
           {!isRegistered && (

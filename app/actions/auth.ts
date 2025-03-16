@@ -1,5 +1,5 @@
 "use server"
-import { SignupFormSchema, FormState } from '@/app/lib/userDefinitions'
+import { LogInFormSchema, FormState } from '@/app/lib/userDefinitions'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken";
 import { prisma } from '../lib/prisma'
@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation';
 
 export async function login(prevState: FormState, formData: FormData): Promise<FormState> {
     console.log("Login function started");
-    const validatedFields = SignupFormSchema.safeParse({
+    const validatedFields = LogInFormSchema.safeParse({
         email: formData.get('email'),
         password: formData.get('password'),
     })
@@ -44,6 +44,6 @@ export async function login(prevState: FormState, formData: FormData): Promise<F
     console.log("Token stored in cookies:", (await cookies()).get("token"));
 
     console.log("Redirecting to /books"); // Debugging log
-    return redirect("/books");
+    redirect("/books");
 }
 
