@@ -6,17 +6,16 @@ const PROTECTED_ROUTES = ["/profile", "/admin"]
 export async function middleware(req: NextRequest) {
     const token = req.cookies.get("token")?.value
     const isProtected = PROTECTED_ROUTES.includes(req.nextUrl.pathname)
-    console.log("Token in middleware:", req.cookies.get("token")?.value);
 
     if(!token && isProtected) {
-        return NextResponse.redirect(new URL('/login', req.url))
+        return NextResponse.redirect(new URL('/signin', req.url))
     }
 
     if(token) {
         try {
             jwt.verify(token, process.env.JWT_SECRET!)
         } catch (error) {
-            return NextResponse.redirect(new URL('/login', req.url))
+            return NextResponse.redirect(new URL('/signin', req.url))
         }
     }
 
@@ -24,5 +23,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    marcher: ["/profile/*", "/admin"]
+    matcher: ["/profile", "/admin"]
 }
