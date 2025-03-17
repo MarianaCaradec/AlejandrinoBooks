@@ -49,3 +49,13 @@ export const fetchCategory = async (categoryId: string): Promise<CategoryWithBoo
         return null
     }
 }
+
+export const fetchAuth = async () => {
+    try {
+        const res = await fetch(`${API_URL}/api/auth/me`, { cache: "no-store" });
+        const auth = await res.json();
+        return auth
+    } catch (error) {
+        console.error("Error authenticating user:", error)
+    }
+}
