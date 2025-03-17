@@ -7,7 +7,6 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export async function login(prevState: FormState, formData: FormData): Promise<FormState> {
-    console.log("Login function started");
     const validatedFields = LogInFormSchema.safeParse({
         email: formData.get('email'),
         password: formData.get('password'),
@@ -38,12 +37,7 @@ export async function login(prevState: FormState, formData: FormData): Promise<F
         expiresIn: '1h',
     });
 
-    console.log("Generated token:", token);
-
     (await cookies()).set("token", token, {httpOnly: true, secure: true})
-    console.log("Token stored in cookies:", (await cookies()).get("token"));
-
-    console.log("Redirecting to /books"); // Debugging log
     redirect("/books");
 }
 
