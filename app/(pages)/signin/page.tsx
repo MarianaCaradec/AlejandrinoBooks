@@ -4,14 +4,14 @@ import { register } from "@/app/actions/register";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 
-export default function Login() {
+export default function SignIn() {
   const router = useRouter();
   const [loginState, loginAction, loginPending] = useActionState(login, {});
   const [registerState, registerAction, registerPending] = useActionState(
     register,
     {}
   );
-  const [isRegistered, setIsRegistered] = useState(true);
+  const [isRegistered, setIsRegistered] = useState<boolean>(true);
 
   useEffect(() => {
     if (loginState?.message === "Success") {
@@ -22,7 +22,9 @@ export default function Login() {
   return (
     <div className="max-w-4xl mx-auto p-6 py-20">
       <h2 className="text-3xl text-center font-bold text-[#D4B483] mb-6">
-        {isRegistered ? "Log In" : "Create an account"}
+        {isRegistered
+          ? "Log in with your email and password"
+          : "Create an account"}
       </h2>
       <div className="flex flex-col items-center gap-6">
         <form
@@ -82,7 +84,7 @@ export default function Login() {
               disabled={isRegistered ? loginPending : registerPending}
               className="bg-black text-[#D4B483] text-xl font-bold rounded-md p-3 w-full"
             >
-              {!isRegistered ? "Create account" : "Sing In"}
+              {!isRegistered ? "Create" : "Log in"}
             </button>
           </div>
         </form>
