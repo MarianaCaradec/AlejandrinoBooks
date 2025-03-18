@@ -1,26 +1,10 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import { logout } from "../actions/logout";
-import { fetchAuth } from "@/utils/fetchs";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Navbar() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const pathName = usePathname();
-
-  useEffect(() => {
-    const getAuth = async () => {
-      try {
-        const data = await fetchAuth();
-        if (data) setIsAuthenticated(data.isAuthenticated);
-      } catch (error) {
-        console.error("Error al confirmar autenticación del usuario", error);
-      }
-    };
-
-    getAuth();
-  }, [pathName]);
+  const { isAuthenticated } = useAuth();
 
   return (
     <nav className="bg-black shadow-md p-4 flex justify-between items-center fixed top-0 left-0 w-full z-50 bg-black/70 backdrop-blur-md">
