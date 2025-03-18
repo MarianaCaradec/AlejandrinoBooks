@@ -1,25 +1,26 @@
 import { NextRequest, NextResponse } from "next/server"
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 
 const PROTECTED_ROUTES = ["/profile", "/admin"]
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 
 export async function middleware(req: NextRequest) {
     const token = req.cookies.get("token")?.value
     const isProtected = PROTECTED_ROUTES.includes(req.nextUrl.pathname)
-
+    
     if(!token && isProtected) {
         return NextResponse.redirect(new URL('/signin', req.url))
     }
 
     if(token) {
         try {
-            jwt.verify(token, process.env.JWT_SECRET!)
+            jwtVerify(token, JWT_SECRET)
+            return NextResponse.next()
         } catch (error) {
-            return NextResponse.redirect(new URL('/signin', req.url))
+            return NextResponse.redirect(new URL('/', req.url))
         }
     }
 
-    return NextResponse.next()
 }
 
 export const config = {
