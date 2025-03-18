@@ -54,6 +54,9 @@ export const fetchAuth = async () => {
     try {
         const res = await fetch(`${API_URL}/api/auth/me`, { cache: "no-store" });
         const auth = await res.json();
+
+        if (!res.ok) return { isAuthenticated: false };
+        
         return auth
     } catch (error) {
         console.error("Error authenticating user:", error)
