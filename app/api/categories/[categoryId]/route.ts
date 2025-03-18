@@ -38,6 +38,7 @@ export async function PUT(
                     name: body.name
                 }
             })
+            return NextResponse.json(updatedCategory, {status: 200})
         } catch (error) {
             return NextResponse.json({error: "Error al actualizar la categoria elegida"})
         }
