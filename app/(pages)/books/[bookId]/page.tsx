@@ -1,7 +1,6 @@
 "use client";
 import type { BookWithCategory } from "@/app/lib/prisma";
 import { fetchBook } from "@/utils/fetchs";
-import { Book } from "@prisma/client";
 import { use, useEffect, useState } from "react";
 
 export default function BookDetails({
