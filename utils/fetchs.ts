@@ -1,4 +1,4 @@
-import { BookWithCategory, CategoryWithBooks } from "@/lib/prisma";
+import { BookWithCategory, CategoryWithBooks } from "@/app/lib/prisma";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -47,5 +47,18 @@ export const fetchCategory = async (categoryId: string): Promise<CategoryWithBoo
     } catch (error) {
         console.error("Error fetching category:", error)
         return null
+    }
+}
+
+export const fetchAuth = async () => {
+    try {
+        const res = await fetch(`${API_URL}/api/auth/me`, { cache: "no-store" });
+        const auth = await res.json();
+
+        if (!res.ok) return { isAuthenticated: false };
+        
+        return auth
+    } catch (error) {
+        console.error("Error authenticating user:", error)
     }
 }

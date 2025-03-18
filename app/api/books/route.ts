@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-import {prisma} from '@/lib/prisma'
+import {prisma} from '@/app/lib/prisma'
 import { Decimal } from "@prisma/client/runtime/index-browser.js";
+import { Prisma } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
         try {
@@ -16,7 +17,7 @@ export async function GET(req: NextRequest) {
                 return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
             }
 
-            const whereConditions: Prisma.BookWhereInput = {}
+            const whereConditions: Prisma.bookWhereInput = {}
 
             if (categoryId) {
                 whereConditions.categoryId = categoryId

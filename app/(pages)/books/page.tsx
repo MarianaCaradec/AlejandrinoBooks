@@ -1,13 +1,13 @@
 "use client";
-import { Book } from "@prisma/client";
+import { book } from "@prisma/client";
 import { fetchBooks, fetchCategories } from "@/utils/fetchs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { CategoryWithBooks } from "@/lib/prisma";
+import { CategoryWithBooks } from "@/app/lib/prisma";
 import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Books() {
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<book[]>([]);
   const [categoryId, setCategoryId] = useState<string>("");
   const [categories, setCategories] = useState<CategoryWithBooks[] | null>(
     null
@@ -155,7 +155,7 @@ export default function Books() {
           value={categoryId}
           className="bg-[#53917E] text-[#E4DFDA] p-4 rounded-lg shadow-md hover:shadow-lg hover:cursor-pointer transition"
         >
-          <option value={""}>Todos</option>
+          <option value={""}>All books</option>
           {categories &&
             categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
