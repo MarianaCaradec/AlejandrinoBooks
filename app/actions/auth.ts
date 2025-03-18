@@ -38,6 +38,6 @@ export async function login(prevState: FormState, formData: FormData): Promise<F
     });
 
     (await cookies()).set("token", token, {httpOnly: true, secure: true})
-    redirect("/books");
+    redirect("/");
 }
 
