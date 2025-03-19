@@ -1,7 +1,7 @@
 "use server"
 import { LogInFormSchema, FormState } from '@/app/lib/userDefinitions'
 import bcrypt from 'bcryptjs'
-import jwt from "jsonwebtoken";
+import { SignJWT } from "jose";
 import { prisma } from '../lib/prisma'
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -33,9 +33,12 @@ export async function login(prevState: FormState, formData: FormData): Promise<F
     }
 
     const role = user.role
-    const token = jwt.sign({email, role}, process.env.JWT_SECRET!, {
-        expiresIn: '1h',
-    });
+
+    const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
+    const token = await new SignJWT({email, role})
+    .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime('1h')
+    .sign(JWT_SECRET);
 
     (await cookies()).set("token", token, {httpOnly: true, secure: true})
     redirect("/");
