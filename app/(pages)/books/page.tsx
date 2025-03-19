@@ -106,7 +106,6 @@ export default function Books() {
   };
 
   const handleSearch = (input: string) => {
-    setInputSearch(input);
     updateUrlParams("search", input || null);
   };
 
@@ -119,11 +118,11 @@ export default function Books() {
             placeholder="search by title, author or category"
             name="text"
             type="text"
-            onChange={(e) => handleSearch(e.target.value)}
+            onChange={(e) => setInputSearch(e.target.value)}
             value={inputSearch}
             className="bg-[#D4B483] text-black text-lg rounded-md placeholder-black p-4 w-full max-w-md"
           />
-          <button>
+          <button onClick={() => handleSearch(inputSearch)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -184,7 +183,7 @@ export default function Books() {
               </li>
             ))
           ) : (
-            <p>No hay libros disponibles</p>
+            <p>No books available</p>
           )}
         </ul>
         {Array.isArray(books) && books.length > 0 && totalPages > 1 && (
