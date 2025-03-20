@@ -1,14 +1,11 @@
 "use client";
-import { fetchBooks } from "@/utils/fetchs";
+import Books from "@/app/components/Books";
 import { book } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/index-browser.js";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const AdminPage = () => {
   const [books, setBooks] = useState<book[]>([]);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const [newBook, setNewBook] = useState<book>({
     id: "",
     title: "",
@@ -22,7 +19,6 @@ const AdminPage = () => {
     createdAt: new Date(),
     updatedAt: new Date(),
   });
-  const [loading, setLoading] = useState<boolean>(true);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files, value } = e.target;
@@ -59,47 +55,6 @@ const AdminPage = () => {
     const form = e.target as HTMLFormElement;
     form.reset();
   };
-
-  useEffect(() => {
-    const getBooks = async () => {
-      try {
-        const data = await fetchBooks(currentPage, 5);
-        setBooks(data.booksFromDb);
-        setTotalPages(data.totalPages);
-        setCurrentPage(data.currentPage);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getBooks();
-  }, [currentPage]);
-
-  const paginationHandler = (action: "prev" | "next") => {
-    setCurrentPage((page) => {
-      let newPage = page;
-
-      switch (true) {
-        case action === "prev" && page > 1:
-          newPage = page - 1;
-          break;
-        case action === "next" && page < totalPages:
-          newPage = page + 1;
-          break;
-        default:
-          break;
-      }
-
-      return newPage;
-    });
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   const handleDelete = async (bookId: string) => {
     try {
@@ -212,56 +167,16 @@ const AdminPage = () => {
         </form>
       </div>
       <div>
-        <ul className="space-y-4 py-4">
-          {books && books.length > 0 ? (
-            books.map((book) => (
-              <li
-                key={book.id}
-                className="bg-black p-4 rounded-lg shadow-md hover:shadow-lg transition"
-              >
-                <Link
-                  href={`/books/${book.id}`}
-                  className="block text-xl font-semibold hover:text-[#53917E]"
-                >
-                  {book.title}
-                </Link>
-                <p className="text-[#53917E]">Author: </p>
-                <p>{book.author}</p>
-                <p className="text-[#53917E] text-sm">
-                  {book.price.toString()}
-                </p>
-                <button
-                  onClick={() => handleDelete(book.id)}
-                  className="bg-[#D4B483] text-black text-xl font-bold rounded-md p-3 my-2"
-                >
-                  Delete book
-                </button>
-              </li>
-            ))
-          ) : (
-            <p>No hay libros disponibles</p>
-          )}
-        </ul>
-        {books.length > 0 && totalPages > 1 && (
-          <div className="flex items-center justify-center gap-3">
+        <Books />
+        {books &&
+          books.map((book) => (
             <button
-              onClick={() => paginationHandler("prev")}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-[#D4B483] text-black rounded disabled:opacity-50"
+              onClick={() => handleDelete(book.id)}
+              className="bg-[#D4B483] text-black text-xl font-bold rounded-md p-3 my-2"
             >
-              Previous
+              Delete book
             </button>
-            <p className="text-[#53917E]">{currentPage}</p>
-            <button
-              onClick={() => paginationHandler("next")}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-[#D4B483] text-black rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-            <p className="text-[#53917E]">{totalPages}</p>
-          </div>
-        )}
+          ))}
       </div>
     </div>
   );
