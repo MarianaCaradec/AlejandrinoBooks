@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -11,6 +12,7 @@ model book {
   id          String   @id @default(uuid())
   title       String
   author      String
+  image       String   @default("")
   resume      String   @db.Text
   description String   @db.Text
   price       Decimal
@@ -36,6 +38,7 @@ model user {
   id       String @id @default(uuid())
   name     String
   role     Roles  @default(CLIENT)
+  image    String @default("")
   email    String @unique
   password String
 }
