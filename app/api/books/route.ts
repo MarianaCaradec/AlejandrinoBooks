@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import {prisma} from '@/app/lib/prisma'
 import { Decimal } from "@prisma/client/runtime/index-browser.js";
 import { Prisma } from "@prisma/client";
+import { Storage } from "@google-cloud/storage";
+import { v4 as uuidv4 } from "uuid";
 
 export async function GET(req: NextRequest) {
         try {
@@ -60,20 +62,49 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json()
+        const bucketName = process.env.BUCKET_NAME!
+        const storage = new Storage();
+        const bucket = storage.bucket(bucketName)
+
+        const formData = await req.formData()
+
+        const title = formData.get("title") as string
+        const author = formData.get("author") as string
+        const file = formData.get("file") as File
+        const resume = formData.get("resume") as string
+        const description = formData.get("description") as string
+        const price = formData.get("price") as string
+        const categoryId = formData.get("categoryId") as string
+        const stock = formData.get("stock") as string
+
+        if(!title || !author || !file || !resume || !description || !price || !categoryId || !stock) {
+            return NextResponse.json("Error: obligatory field not filled", {status: 400})
+        }
+
+        const fileName = `books_imgs/${uuidv4()}-${file.name}`
+        const fileToBeUploaded = bucket.file(fileName)
+
+        const buffer = Buffer.from(await file.arrayBuffer())
+        await fileToBeUploaded.save(buffer, {
+            metadata: {contentType: file.type},
+            public: true
+        })
+
+        const fileUrl = `https://storage.cloud.google.com/${bucketName}/${fileName}`
 
         const newBook = await prisma.book.create({
             data: {
-                title: body.title,
-                author: body.author,
-                resume: body.resume,
-                description: body.description,
-                price: new Decimal(body.price),
-                categoryId: body.categoryId,
-                stock: Number(body.stock)
+                title,
+                author,
+                image: fileUrl,
+                resume,
+                description,
+                price: new Decimal(price),
+                categoryId,
+                stock: Number(stock)
             }
         })
-        console.log("✅ Libro creado:", newBook);
+
     return NextResponse.json(newBook, {status: 201})
     } catch (error) {
         return NextResponse.json(

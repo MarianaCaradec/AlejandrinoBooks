@@ -13,6 +13,7 @@ const AdminPage = () => {
     id: "",
     title: "",
     author: "",
+    image: "",
     resume: "",
     description: "",
     price: new Decimal(0),
@@ -24,25 +25,23 @@ const AdminPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name, files, value } = e.target;
 
     setNewBook((prevState: book) => ({
       ...prevState,
-      [name]: name === "price" ? new Decimal(value) : value,
+      [name]:
+        name === "price" ? new Decimal(value) : files?.[0] ? files[0] : value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     try {
+      const formData = new FormData(e.currentTarget);
+
       const res = await fetch("/api/books", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...newBook,
-          price: newBook?.price ? newBook.price.toString() : "0",
-        }),
+        body: formData,
       });
 
       if (!res.ok) {
@@ -155,6 +154,8 @@ const AdminPage = () => {
             required
             className="text-center text-lg text-[#D4B483] rounded-md bg-black w-full"
           />
+          <label className="text-black text-xl font-bold">Image</label>
+          <input type="file" name="file" accept="image/*" required />
           <label className="text-black text-xl font-bold">Resume</label>
           <input
             type="text"

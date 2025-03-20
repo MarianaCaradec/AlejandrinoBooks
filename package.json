@@ -12,12 +12,14 @@
     "seed": "node ./prisma/seed.js"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.15.2",
     "@prisma/client": "^6.5.0",
     "bcryptjs": "^3.0.2",
     "jose": "^6.0.10",
     "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "uuid": "^11.1.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
