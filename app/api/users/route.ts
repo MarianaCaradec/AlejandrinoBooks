@@ -15,13 +15,23 @@ export async function GET() {
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json()
+        const formData = await req.formData()
+
+        const name = formData.get("name") as string
+        const email = formData.get("email") as string
+        const fileUrl = formData.get("file") as string 
+        const password = formData.get("password") as string
+
+        if(!name || !email || !password) {
+            return NextResponse.json("Error: obligatory field not filled", {status: 400})
+        }
 
         const newUser = await prisma.user.create({
             data: {
-                name: body.name,
-                email: body.email,
-                password: body.password
+                name,
+                email,
+                image: fileUrl,
+                password
             }
         })
 
