@@ -1,11 +1,12 @@
 "use client";
-import Books from "@/app/components/Books";
+import { useBooks } from "@/app/contexts/BooksContext";
 import { book } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/index-browser.js";
+import Image from "next/image";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const AdminPage = () => {
-  const [books, setBooks] = useState<book[]>([]);
   const [newBook, setNewBook] = useState<book>({
     id: "",
     title: "",
@@ -19,6 +20,9 @@ const AdminPage = () => {
     createdAt: new Date(),
     updatedAt: new Date(),
   });
+
+  const { books, setBooks, paginationHandler, totalPages, currentPage } =
+    useBooks();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files, value } = e.target;
@@ -47,7 +51,7 @@ const AdminPage = () => {
       }
 
       const data = await res.json();
-      setBooks([data, ...books]);
+      setBooks((prevBooks) => [data, ...prevBooks]);
     } catch (error) {
       console.error(error);
     }
@@ -77,7 +81,7 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 py-20">
+    <div className="max-w-4xl mx-auto py-20">
       <div>
         <h1 className="text-3xl font-bold text-[#D4B483] mb-6">
           Welcome, admin
@@ -166,18 +170,59 @@ const AdminPage = () => {
           </div>
         </form>
       </div>
-      <div>
-        <Books />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 my-5">
         {books &&
           books.map((book) => (
-            <button
-              onClick={() => handleDelete(book.id)}
-              className="bg-[#D4B483] text-black text-xl font-bold rounded-md p-3 my-2"
+            <div
+              key={book.id}
+              className="flex flex-col items-center justify-between w-full bg-black rounded-lg shadow-md p-4"
             >
-              Delete book
-            </button>
+              <Link
+                href={`/books/${book.id}`}
+                className="block text-xl font-semibold hover:text-[#53917E]"
+              >
+                <h2 className="text-[#53917E] text-xl font-semibold">
+                  {book.title}
+                </h2>
+              </Link>
+              <h3 className="text-[#53917E] text-lg">Author: </h3>
+              <p className="text-[#E4DFDA]">{book.author}</p>
+              <Image
+                src={book.image}
+                width={150}
+                height={200}
+                alt="Book's cover"
+                className="rounded-lg"
+              />
+              <button
+                onClick={() => handleDelete(book.id)}
+                className="bg-[#D4B483] text-black text-xl font-bold rounded-md p-3 mt-2 w-full"
+              >
+                Delete book
+              </button>
+            </div>
           ))}
       </div>
+      {books.length > 0 && totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={() => paginationHandler("prev")}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-[#D4B483] text-black rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <p className="text-[#53917E]">{currentPage}</p>
+          <button
+            onClick={() => paginationHandler("next")}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-[#D4B483] text-black rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+          <p className="text-[#53917E]">{totalPages}</p>
+        </div>
+      )}
     </div>
   );
 };
