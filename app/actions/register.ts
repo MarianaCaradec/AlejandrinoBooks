@@ -24,11 +24,20 @@ export async function register(state: FormState, formData: FormData): Promise<Fo
         return {message: "User is already registered"}
     }
 
+    const bucketName = process.env.BUCKET_NAME!;
+
+    const defaultImageUrl = `https://storage.googleapis.com/${bucketName}/profile_imgs/default_profile_pic.jpeg`;
+
+    const uploadedFileUrl = formData.get("uploadedFileUrl") as string;
+    let fileUrl: string = uploadedFileUrl || defaultImageUrl;
+    console.log("URL de imagen final (backend):", fileUrl);
+
     const hashedPassword = await bcrypt.hash(password, 10)
 
     await prisma.user.create({
         data: {
             name,
+            image: fileUrl,
             email,
             password: hashedPassword
         }
