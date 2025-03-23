@@ -30,11 +30,12 @@ export default function Books() {
               <p>{book.author}</p>
               <Image
                 src={book.image}
-                width={250}
-                height={300}
+                width={150}
+                height={200}
                 alt="Book's cover"
+                className="rounded-lg"
               />
-              <p className="text-[#53917E] text-sm">{book.price.toString()}</p>
+              <p className="text-[#53917E] text-lg">{book.price.toString()}</p>
             </li>
           ))
         ) : (
