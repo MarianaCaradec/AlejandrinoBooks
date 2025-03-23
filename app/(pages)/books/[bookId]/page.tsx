@@ -1,6 +1,7 @@
 "use client";
 import type { BookWithCategory } from "@/app/lib/prisma";
 import { fetchBook } from "@/utils/fetchs";
+import Image from "next/image";
 import { use, useEffect, useState } from "react";
 
 export default function BookDetails({
@@ -31,10 +32,17 @@ export default function BookDetails({
     <main className="max-w-2xl mx-auto p-6 bg-black shadow-md rounded-lg py-20">
       <h1 className="text-3xl font-bold text-[#D4B483] mb-4">Book Details</h1>
       {book ? (
-        <div className="space-y-2 text-gray-500">
+        <div className="text-[#53917E]">
           <h2 className="text-[#53917E] text-xl font-semibold">{book.title}</h2>
           <h3 className="text-[#53917E] text-lg">Author: </h3>
           <p className="text-[#E4DFDA]">{book.author}</p>
+          <Image
+            src={book.image}
+            width={150}
+            height={200}
+            alt="Book's cover"
+            className="rounded-lg"
+          />
           <p className="text-sm text-[#53917E]">Resume: </p>
           <p className="text-[#E4DFDA]">{book.resume}</p>
           <h3 className="text-[#53917E]">Category: </h3>
