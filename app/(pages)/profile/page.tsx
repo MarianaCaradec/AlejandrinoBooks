@@ -15,7 +15,7 @@ export default function page() {
         {isAuthenticated && (
           <Card
             name={user.name}
-            avatar="https://randomuser.me/api/portraits/women/51.jpg"
+            avatar={user.image}
             email={user.email}
             desc="Software Engineer passionate about building amazing web applications."
           />
