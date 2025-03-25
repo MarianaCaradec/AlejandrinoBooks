@@ -7,7 +7,7 @@ export async function GET() {
         return NextResponse.json(users, {status: 200})
     } catch (error) {
         return NextResponse.json(
-            { error: error instanceof Error ? error.message : "Error desconocido al encontrar los los usuarios" },
+            { error: error instanceof Error ? error.message : "Couldn't reach users" },
             {status: 500}
         )
     }
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
         return NextResponse.json(newUser, {status: 201})
     } catch (error) {
         return NextResponse.json(
-            {error: "Error al crear un usuario nuevo"},
+            {error: "Couldn't create the new user"},
             {status: 500}
         )
     }

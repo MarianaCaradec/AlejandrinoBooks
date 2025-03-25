@@ -16,10 +16,10 @@ export async function GET(req: NextRequest) {
             const categoryId = searchParams.get("categoryId") || ""
         
             if (isNaN(pageInt) || isNaN(limitInt) || pageInt < 1 || limitInt < 1) {
-                return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
+                return NextResponse.json({ error: "Invalid params" }, { status: 400 });
             }
 
-            const whereConditions: Prisma.bookWhereInput = {}
+            const whereConditions: Prisma.BookWhereInput = {}
 
             if (categoryId) {
                 whereConditions.categoryId = categoryId
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
             }, {status: 200})
         } catch (error){
             return NextResponse.json(
-                { error: error instanceof Error ? error.message : "Error desconocido al encontrar los libros" },
+                { error: error instanceof Error ? error.message : "Couldn't find books" },
                 {status: 500}
             )
         }  
@@ -108,7 +108,7 @@ export async function POST(req: Request) {
     return NextResponse.json(newBook, {status: 201})
     } catch (error) {
         return NextResponse.json(
-            { error: error instanceof Error ? error.message : "Error al crear un libro nuevo"},
+            { error: error instanceof Error ? error.message : "Couldn't create book"},
             {status: 500}
         )
     }

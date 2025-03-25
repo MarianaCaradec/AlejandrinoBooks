@@ -12,7 +12,7 @@ export async function GET() {
         return NextResponse.json(categoriesFromDb, {status: 200})
     } catch (error) {
         return NextResponse.json(
-            {error: "Error al obtener las categorías de libros"},
+            {error: "Couldn't reach books' categories"},
             {status: 500}
         )
     }
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
         return NextResponse.json(newCategory, {status: 201})
     } catch (error) {
         return NextResponse.json(
-            {error: "Error al crear nueva categoria"},
+            {error: "Couldn't create category"},
             {status: 500}
         )
     }
