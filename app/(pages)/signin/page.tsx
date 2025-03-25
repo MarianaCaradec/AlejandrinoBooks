@@ -9,6 +9,8 @@ import {
 import { useRouter } from "next/navigation";
 import { login } from "@/app/actions/auth";
 import { register } from "@/app/actions/register";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignIn() {
   const router = useRouter();
@@ -84,24 +86,36 @@ export default function SignIn() {
       registerState?.message === "You've just registered, congratulations!" &&
       credentials
     ) {
+      toast.success("You've just registered, congratulations!");
       startTransition(() => {
         const loginData = new FormData();
         loginData.append("email", credentials.email);
         loginData.append("password", credentials.password);
         loginAction(loginData);
       });
-      router.push("/books");
+    } else if (registerState?.message === "User is already registered") {
+      toast.error(registerState.message);
     }
   }, [registerState, credentials, loginAction, router]);
 
   useEffect(() => {
-    if (loginState?.message === "Success") {
-      router.push("/books");
+    if (loginState?.message === "Login successful!") {
+      toast.success("Login in and redirecting to books...");
+
+      setTimeout(() => {
+        router.push("/books"); // Redirección después de 10 segundos
+      }, 3000);
+    } else if (
+      loginState?.message === "Email does not exist" ||
+      loginState?.message === "Incorrect password"
+    ) {
+      toast.error(loginState.message);
     }
   }, [loginState, router]);
 
   return (
     <div className="max-w-4xl mx-auto p-6 py-20">
+      <ToastContainer autoClose={3000} />
       <h2 className="text-3xl text-center font-bold text-[#D4B483] mb-6">
         {isRegistered
           ? "Log in with your email and password"
