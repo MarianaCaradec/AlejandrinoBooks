@@ -14,13 +14,13 @@ export async function GET(
             })      
             
             if (!user) {
-                return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
+                return NextResponse.json({ error: 'User not found' }, { status: 404 });
             }
 
             return NextResponse.json(user, {status: 200})
         } catch (error) {
             return NextResponse.json(
-                {error: "Error al encontrar el usuario solicitado"},
+                {error: "Couldn't reach the user"},
                 {status: 500}
             )
         }
@@ -46,7 +46,7 @@ export async function PUT(
             return NextResponse.json(updatedUser, {status: 200})
         } catch (error) {
             return NextResponse.json(
-                {error: "No fue posible actualizar el usuario declarado"},
+                {error: "Couldn't update the user"},
                 {status: 500}
             )
         }
@@ -63,10 +63,10 @@ export async function DELETE(
                     id: userId
                 }
             })
-            return NextResponse.json({message: `El usuario ${userToBeDeleted.email} fue eliminado correctamente`}, {status: 200})
+            return NextResponse.json({message: `The user ${userToBeDeleted.email} has been successfully removed`}, {status: 200})
         } catch (error) {            
             return NextResponse.json(
-                {error: "Error al eliminar el usuario solicitado"},
+                {error: "Couldn't remove the user"},
                 {status: 500}
             )
         }

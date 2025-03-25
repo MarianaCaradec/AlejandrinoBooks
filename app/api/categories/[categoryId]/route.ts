@@ -18,7 +18,7 @@ export async function GET(
         return NextResponse.json(category, {status: 200})
     } catch (error) {
         return NextResponse.json(
-            {error: "Error al encontrar la categoria designada"},
+            {error: "Couldn't reach the declared category"},
             {status: 500}
         )
     }
@@ -40,7 +40,7 @@ export async function PUT(
             })
             return NextResponse.json(updatedCategory, {status: 200})
         } catch (error) {
-            return NextResponse.json({error: "Error al actualizar la categoria elegida"})
+            return NextResponse.json({error: "Couldn't update category"})
         }
     }
 
@@ -54,8 +54,8 @@ export async function DELETE(
                     id: categoryId
                 }
             })
-            return NextResponse.json({message: `El libro ${categoryToBeDeleted.name} eliminado correctamente`}, {status: 200})
+            return NextResponse.json({message: `The category ${categoryToBeDeleted.name} has been succesfully removed`}, {status: 200})
         } catch (error) {
-            return NextResponse.json({error: "Error al eliminar el libro solicitado"})
+            return NextResponse.json({error: "Couldn't remove the category"})
         }
     }
