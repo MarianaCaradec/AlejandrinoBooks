@@ -103,7 +103,7 @@ export default function SignIn() {
       toast.success("Login in and redirecting to books...");
 
       setTimeout(() => {
-        router.push("/books"); // Redirección después de 10 segundos
+        router.push("/books");
       }, 3000);
     } else if (
       loginState?.message === "Email does not exist" ||
