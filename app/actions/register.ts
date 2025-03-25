@@ -30,7 +30,6 @@ export async function register(state: FormState, formData: FormData): Promise<Fo
 
     const uploadedFileUrl = formData.get("uploadedFileUrl") as string;
     let fileUrl: string = uploadedFileUrl || defaultImageUrl;
-    console.log("URL de imagen final (backend):", fileUrl);
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
