@@ -1,5 +1,5 @@
 "use client";
-import { book } from "@prisma/client";
+import { Book } from "@prisma/client";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
   createContext,
@@ -12,8 +12,8 @@ import {
 import { fetchBooks } from "@/utils/fetchs";
 
 interface BooksContextType {
-  books: book[];
-  setBooks: Dispatch<SetStateAction<book[]>>;
+  books: Book[];
+  setBooks: Dispatch<SetStateAction<Book[]>>;
   categoryId: string;
   setCategoryId: Dispatch<SetStateAction<string>>;
   inputSearch: string;
@@ -32,7 +32,7 @@ interface BooksContextType {
 const BooksContext = createContext<BooksContextType | undefined>(undefined);
 
 export function BooksProvider({ children }: { children: React.ReactNode }) {
-  const [books, setBooks] = useState<book[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const [categoryId, setCategoryId] = useState<string>("");
   const [inputSearch, setInputSearch] = useState<string>("");
   const [totalPages, setTotalPages] = useState<number>(1);

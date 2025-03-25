@@ -2,11 +2,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { fetchAuth } from "@/utils/fetchs";
-import { user } from "@prisma/client";
+import { User } from "@prisma/client";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: user | null;
+  user: User | null;
   checkAuth: () => Promise<void>;
 }
 
@@ -14,7 +14,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<user | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const pathName = usePathname();
 
   const checkAuth = async () => {

@@ -1,13 +1,13 @@
 "use client";
 import { useBooks } from "@/app/contexts/BooksContext";
-import { book } from "@prisma/client";
+import { Book } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/index-browser.js";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const AdminPage = () => {
-  const [newBook, setNewBook] = useState<book>({
+  const [newBook, setNewBook] = useState<Book>({
     id: "",
     title: "",
     author: "",
@@ -27,7 +27,7 @@ const AdminPage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files, value } = e.target;
 
-    setNewBook((prevState: book) => ({
+    setNewBook((prevState: Book) => ({
       ...prevState,
       [name]:
         name === "price" ? new Decimal(value) : files?.[0] ? files[0] : value,

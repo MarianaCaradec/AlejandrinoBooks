@@ -6,10 +6,10 @@ export const prisma = globalForPrisma.prisma ?? new PrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-export type BookWithCategory = Prisma.bookGetPayload<{
+export type BookWithCategory = Prisma.BookGetPayload<{
     include: { category: true };
 }>;
 
-export type CategoryWithBooks = Prisma.categoryGetPayload<{
+export type CategoryWithBooks = Prisma.CategoryGetPayload<{
     include: { books: true }
 }>;
