@@ -32,15 +32,12 @@ export async function POST(req: Request) {
       metadata: { contentType },
       public: true,
     });
-    console.log("Archivo recibido:", fileCandidate);
-    console.log("Nombre del archivo:", fileCandidate?.name);
-    console.log("Tipo MIME:", fileCandidate?.type);
     const fileUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
     return NextResponse.json({ fileUrl }, { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Error al subir el archivo" },
+      { error: "Couldn't upload the file" },
       { status: 500 }
     );
   }
