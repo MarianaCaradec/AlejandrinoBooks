@@ -4,7 +4,6 @@ import bcrypt from 'bcryptjs'
 import { SignJWT } from "jose";
 import { prisma } from '../lib/prisma'
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 export async function login(prevState: FormState, formData: FormData): Promise<FormState> {
     const validatedFields = LogInFormSchema.safeParse({
@@ -41,6 +40,6 @@ export async function login(prevState: FormState, formData: FormData): Promise<F
     .sign(JWT_SECRET);
 
     (await cookies()).set("token", token, {httpOnly: true, secure: true})
-    redirect("/");
+    return { message: "Login successful!" };
 }
 
