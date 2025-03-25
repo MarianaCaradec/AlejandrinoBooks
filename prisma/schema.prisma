@@ -8,25 +8,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model book {
-  id          String   @id @default(uuid())
+model Book {
+  id          String      @id @default(uuid())
   title       String
   author      String
-  image       String   @default("")
-  resume      String   @db.Text
-  description String   @db.Text
+  image       String      @default("")
+  resume      String      @db.Text
+  description String      @db.Text
   price       Decimal
   categoryId  String
-  category    category @relation(fields: [categoryId], references: [id])
+  category    Category    @relation(fields: [categoryId], references: [id])
   stock       Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  cartItem    CartItem[]
+  orderItem   OrderItem[]
 }
 
-model category {
+model Category {
   id    String @id @default(uuid())
   name  String
-  books book[]
+  books Book[]
+}
+
+model Cart {
+  id     String     @id @default(uuid())
+  userId String     @unique
+  user   User       @relation(fields: [userId], references: [id])
+  items  CartItem[]
+}
+
+model CartItem {
+  id       String @id @default(uuid())
+  cartId   String
+  cart     Cart   @relation(fields: [cartId], references: [id])
+  bookId   String
+  book     Book   @relation(fields: [bookId], references: [id])
+  quantity Int
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String      @unique
+  user        User        @relation(fields: [userId], references: [id])
+  items       OrderItem[]
+  totalAmount Float
+  status      String
+}
+
+model OrderItem {
+  id       String @id @default(uuid())
+  orderId  String
+  order    Order  @relation(fields: [orderId], references: [id])
+  bookId   String
+  book     Book   @relation(fields: [bookId], references: [id])
+  quantity Int
 }
 
 enum Roles {
@@ -34,11 +70,13 @@ enum Roles {
   CLIENT
 }
 
-model user {
+model User {
   id       String @id @default(uuid())
   name     String
   role     Roles  @default(CLIENT)
   image    String @default("")
   email    String @unique
   password String
+  cart     Cart?
+  order    Order?
 }
