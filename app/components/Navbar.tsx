@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { logout } from "../actions/logout";
 import { useAuth } from "../contexts/AuthContext";
+import CartIcon from "./CartIcon";
 
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
@@ -31,10 +32,13 @@ export default function Navbar() {
             <button
               type="submit"
               onClick={logout}
-              className="text-[#E4DFDA] hover:text-[#53917E] font-semibold"
+              className="text-[#E4DFDA] hover:text-[#53917E]"
             >
               Log out
             </button>
+            <Link href="/cart" className="text-[#E4DFDA] hover:text-[#53917E]">
+              <CartIcon />
+            </Link>
           </>
         ) : (
           <Link href="/signin" className="text-[#E4DFDA] hover:text-[#53917E]">
