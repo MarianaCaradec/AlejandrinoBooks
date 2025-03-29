@@ -1,0 +1,60 @@
+name: Deploy in Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Authenticate on Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Configurate Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+
+      - name: Authenticate Docker with Artifact Registry
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build and send image to Artifact Registry
+        run: |
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/next-first-project/alejandrino-books .
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/next-first-project/alejandrino-books
+
+      - name: Deploy on Cloud Run
+        run: |
+          gcloud run deploy alejandrino-books \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}//next-first-project/alejandrino-books \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated \
+            --service-account github-actions@${{ secrets.GCP_PROJECT }}.iam.gserviceaccount.com \
+            --set-env-vars "NODE_ENV=production" \
+            --set-env-vars "DATABASE_URL=${{ secrets.DATABASE_URL }}"
+            --set-env-vars "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}"
+            --set-env-vars "JWT_SECRET=${{ secrets.JWT_SECRET }}"
+            --set-env-vars "BUCKET_NAME=${{ secrets.BUCKET_NAME }}"
+            --set-env-vars "BUCKET_PROFILE_IMGS_URL=${{ secrets.BUCKET_PROFILE_IMGS_URL }}"
+
+      - name: Execute migrations on Cloud SQL
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          # Install Node.js and dependencies
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+
+          # Run migrations using Prisma
+          npx prisma migrate deploy
+
+          # Push changes on prisma in case migration doesn't work
+          npx prisma db push

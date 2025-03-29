@@ -20,7 +20,16 @@ export async function GET() {
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json()
+        const body: {name: string} = await req.json()
+
+        if (!body.name || typeof body.name !== 'string') {
+            return new Response(JSON.stringify({ error: 'Invalid input: "name" is required and must be a string' }), {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            });
+          }
+
+          
         const newCategory = await prisma.category.create({
             data: {
                 name: body.name

@@ -1,11 +1,18 @@
 import {prisma} from '@/app/lib/prisma'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
-    req: NextResponse,
-    {params,}: {params: {categoryId: string}}) {
+    req: NextRequest,
+    context: { params: Promise<{ categoryId: string }> }
+) {
     try {
-        const {categoryId} = await params
+        const resolvedParams = await context.params
+        const { categoryId } = resolvedParams
+
+        if (!categoryId) {
+            return NextResponse.json({ error: "Category ID is required" }, { status: 400 });
+        }
+
         const category = await prisma.category.findUnique({
             where: {
                 id: categoryId
@@ -25,10 +32,17 @@ export async function GET(
 }
 
 export async function PUT(
-    req: NextResponse,
-    {params}: {params: {categoryId: string}}) {
-        try {
-            const {categoryId} = await params
+    req: NextRequest,
+    context: { params: Promise<{ categoryId: string }> }
+) {
+    try {
+        const resolvedParams = await context.params
+        const { categoryId } = resolvedParams
+    
+            if (!categoryId) {
+                return NextResponse.json({ error: "Category ID is required" }, { status: 400 });
+            }
+
             const body = await req.json()
             const updatedCategory = await prisma.category.update({
                 where: {
@@ -45,10 +59,17 @@ export async function PUT(
     }
 
 export async function DELETE(
-    req: NextResponse,
-    {params}: {params: {categoryId: string}}) {
-        try {
-            const {categoryId} = await params
+    req: NextRequest,
+    context: { params: Promise<{ categoryId: string }> }
+) {
+    try {
+        const resolvedParams = await context.params
+        const { categoryId } = resolvedParams
+
+            if (!categoryId) {
+                return NextResponse.json({ error: "Category ID is required" }, { status: 400 });
+            }
+
             const categoryToBeDeleted = await prisma.category.delete({
                 where: {
                     id: categoryId
