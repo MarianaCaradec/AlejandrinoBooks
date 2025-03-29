@@ -2,10 +2,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useBooks } from "../contexts/BooksContext";
+import { useCartItemContext } from "../contexts/CartItemContext";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Books() {
   const { books, totalPages, currentPage, paginationHandler, loading } =
     useBooks();
+  const { isAuthenticated } = useAuth();
+  const { handleAddItem } = useCartItemContext();
 
   if (loading) {
     return <div>Loading...</div>;
@@ -36,6 +40,13 @@ export default function Books() {
                 className="rounded-lg"
               />
               <p className="text-[#53917E] text-lg">{book.price.toString()}</p>
+              <button
+                onClick={() => handleAddItem(book.id)}
+                disabled={!isAuthenticated}
+                className="px-4 py-2 bg-[#D4B483] text-black rounded disabled:opacity-50"
+              >
+                Add to cart
+              </button>
             </li>
           ))
         ) : (
