@@ -4,7 +4,7 @@ import { Book } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/index-browser.js";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 
 const AdminPage = () => {
   const [newBook, setNewBook] = useState<Book>({
