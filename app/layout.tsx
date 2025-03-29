@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import { AuthProvider } from "./contexts/AuthContext";
 import { BooksProvider } from "./contexts/BooksContext";
+import { CartItemProvider } from "./contexts/CartItemContext";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,12 +32,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <BooksProvider>
-            <Navbar />
-            <main className="relative">{children}</main>
-          </BooksProvider>
-        </AuthProvider>
+        <Suspense fallback={<div>Loading...</div>}>
+          <AuthProvider>
+            <CartItemProvider>
+              <BooksProvider>
+                <Navbar />
+
+                <main className="relative">{children}</main>
+              </BooksProvider>
+            </CartItemProvider>
+          </AuthProvider>
+        </Suspense>
       </body>
     </html>
   );
