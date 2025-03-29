@@ -16,9 +16,11 @@ export default function BookDetails({
 
   useEffect(() => {
     const getBook = async () => {
-      const data = await fetchBook(bookId);
-      setBook(data);
-      setLoading(false);
+      if (bookId) {
+        const data = await fetchBook(bookId);
+        setBook(data);
+        setLoading(false);
+      }
     };
 
     getBook();
