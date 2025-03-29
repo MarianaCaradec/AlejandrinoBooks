@@ -1,11 +1,14 @@
 import { prisma } from "@/app/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-    req: NextResponse,
-    {params}: {params: {userId: string}}) {
+    req: NextRequest) {
         try {
-            const {userId} = await params
+            const {userId} = await req.json()
+    
+            if (!userId) {
+                return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+            }
 
             const user = await prisma.user.findUnique({
                 where: {
@@ -27,10 +30,14 @@ export async function GET(
 }
 
 export async function PUT(
-    req: NextResponse,
-    {params}: {params: {userId: string}}) {
+    req: NextRequest) {
         try {
-            const {userId} = await params
+            const {userId} = await req.json()
+    
+            if (!userId) {
+                return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+            }
+
             const body = await req.json()
 
             const updatedUser = await prisma.user.update({
@@ -53,10 +60,13 @@ export async function PUT(
 }
 
 export async function DELETE(
-    req: NextResponse,
-    {params}: {params: {userId: string}}) {
+    req: NextRequest) {
         try {
-            const {userId} = await params
+            const {userId} = await req.json()
+    
+            if (!userId) {
+                return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+            }
 
             const userToBeDeleted = await prisma.user.delete({
                 where: {

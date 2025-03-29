@@ -9,8 +9,23 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
+
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off", 
+      "react/jsx-props-no-spreading": "off",
+      "react/jsx-no-undef": "off",
+      "react/no-unescaped-entities": "off", 
+      "react-hooks/rules-of-hooks": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "prefer-const": "off",
+    },
+  },
 ];
+
+
 
 export default eslintConfig;

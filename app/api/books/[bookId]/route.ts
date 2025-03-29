@@ -1,13 +1,21 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import {BookWithCategory, prisma} from '@/app/lib/prisma'
 import { Decimal } from "@prisma/client/runtime/index-browser.js";
 
-export async function GET(
-    req: NextResponse,
-    {params}: {params: {bookId: string}}) {
-        try {
-            const {bookId} = await params
+// type Context = Awaited<Promise<{ params: { bookId: string } }>>
 
+export async function GET(
+    req: NextRequest,
+    context: { params: Promise<{ bookId: string }> }
+) {
+    try {
+        const resolvedParams = await context.params
+        const { bookId } = resolvedParams
+    
+            if (!bookId) {
+                return NextResponse.json({ error: "Book ID is required" }, { status: 400 });
+            }
+    
             const book: BookWithCategory | null = await prisma.book.findUnique({
                 where: {
                     id: bookId
@@ -31,10 +39,17 @@ export async function GET(
 }
 
 export async function PUT(
-    req: NextResponse,
-    {params}: {params: {bookId: string}}) {
-        try {
-            const {bookId} = await params
+    req: NextRequest,
+    context: { params: Promise<{ bookId: string }> }
+) {
+    try {
+        const resolvedParams = await context.params
+        const { bookId } = resolvedParams
+
+            if (!bookId) {
+                return NextResponse.json({ error: "Book ID is required" }, { status: 400 });
+            }
+    
             const body = await req.json()
 
             const updatedBook = await prisma.book.update({
@@ -62,11 +77,17 @@ export async function PUT(
 }
 
 export async function DELETE(
-    req: NextResponse,
-    {params}: {params: {bookId: string}}) {
-        try {
-            const {bookId} = await params
-
+    req: NextRequest,
+    context: { params: Promise<{ bookId: string }> }
+) {
+    try {
+        const resolvedParams = await context.params
+        const { bookId } = resolvedParams
+    
+            if (!bookId) {
+                return NextResponse.json({ error: "Book ID is required" }, { status: 400 });
+            }
+    
             const bookToBeDeleted = await prisma.book.delete({
                 where: {
                     id: bookId
