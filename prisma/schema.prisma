@@ -12,17 +12,19 @@ model Book {
   id          String      @id @default(uuid())
   title       String
   author      String
-  image       String      @default("")
   resume      String      @db.Text
   description String      @db.Text
   price       Decimal
   categoryId  String
-  category    Category    @relation(fields: [categoryId], references: [id])
   stock       Int
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  cartItem    CartItem[]
-  orderItem   OrderItem[]
+  image       String      @default("")
+  category    Category    @relation(fields: [categoryId], references: [id], map: "Book_categoryId_fkey")
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+
+  @@index([categoryId], map: "Book_categoryId_fkey")
 }
 
 model Category {
@@ -31,52 +33,58 @@ model Category {
   books Book[]
 }
 
-model Cart {
-  id     String     @id @default(uuid())
-  userId String     @unique
-  user   User       @relation(fields: [userId], references: [id])
-  items  CartItem[]
-}
-
-model CartItem {
-  id       String @id @default(uuid())
-  cartId   String
-  cart     Cart   @relation(fields: [cartId], references: [id])
-  bookId   String
-  book     Book   @relation(fields: [bookId], references: [id])
-  quantity Int
-}
-
 model Order {
   id          String      @id @default(uuid())
   userId      String      @unique
-  user        User        @relation(fields: [userId], references: [id])
-  items       OrderItem[]
   totalAmount Float
   status      String
-}
-
-model OrderItem {
-  id       String @id @default(uuid())
-  orderId  String
-  order    Order  @relation(fields: [orderId], references: [id])
-  bookId   String
-  book     Book   @relation(fields: [bookId], references: [id])
-  quantity Int
-}
-
-enum Roles {
-  ADMIN
-  CLIENT
+  user        User        @relation(fields: [userId], references: [id], map: "Order_userId_fkey")
+  orderItems  OrderItem[]
 }
 
 model User {
   id       String @id @default(uuid())
   name     String
-  role     Roles  @default(CLIENT)
-  image    String @default("")
+  role     Role   @default(CLIENT)
   email    String @unique
   password String
+  image    String @default("")
   cart     Cart?
   order    Order?
+}
+
+model CartItem {
+  id       String @id @default(uuid())
+  cartId   String
+  bookId   String
+  quantity Int
+  book     Book   @relation(fields: [bookId], references: [id])
+  cart     Cart   @relation(fields: [cartId], references: [id])
+
+  @@unique([cartId, bookId])
+  @@index([bookId], map: "CartItem_bookId_fkey")
+}
+
+model OrderItem {
+  id       String @id @default(uuid())
+  orderId  String
+  bookId   String
+  quantity Int
+  book     Book   @relation(fields: [bookId], references: [id])
+  order    Order  @relation(fields: [orderId], references: [id])
+
+  @@index([bookId], map: "OrderItem_bookId_fkey")
+  @@index([orderId], map: "OrderItem_orderId_fkey")
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], map: "Cart_userId_fkey")
+  cartItems CartItem[]
+}
+
+enum Role {
+  ADMIN
+  CLIENT
 }

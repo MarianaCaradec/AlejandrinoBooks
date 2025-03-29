@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE `book` ADD COLUMN `image` VARCHAR(191) NOT NULL DEFAULT '';
-
--- AlterTable
-ALTER TABLE `user` ADD COLUMN `image` VARCHAR(191) NOT NULL DEFAULT '';
