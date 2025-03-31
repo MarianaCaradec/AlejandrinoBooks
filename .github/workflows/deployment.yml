@@ -38,12 +38,7 @@ jobs:
             --region us-central1 \
             --allow-unauthenticated \
             --service-account github-actions@${{ secrets.GCP_PROJECT }}.iam.gserviceaccount.com \
-            --set-env-vars "NODE_ENV=production" \
-            --set-env-vars "DATABASE_URL=${{ secrets.DATABASE_URL }}"
-            --set-env-vars "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}"
-            --set-env-vars "JWT_SECRET=${{ secrets.JWT_SECRET }}"
-            --set-env-vars "BUCKET_NAME=${{ secrets.BUCKET_NAME }}"
-            --set-env-vars "BUCKET_PROFILE_IMGS_URL=${{ secrets.BUCKET_PROFILE_IMGS_URL }}"
+            --set-env-vars NODE_ENV=production,DATABASE_URL=${{ secrets.DATABASE_URL }},NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }},JWT_SECRET=${{ secrets.JWT_SECRET }},BUCKET_NAME=${{ secrets.BUCKET_NAME }},BUCKET_PROFILE_IMGS_URL=${{ secrets.BUCKET_PROFILE_IMGS_URL }}
 
       - name: Execute migrations on Cloud SQL
         env:
