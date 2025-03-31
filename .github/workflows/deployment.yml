@@ -48,8 +48,5 @@ jobs:
           curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
           sudo apt-get install -y nodejs
 
-          # Run migrations using Prisma
-          npx prisma migrate deploy
-
-          # Push changes on prisma in case migration doesn't work
+          # Push changes on prisma in case migration doesn't work because of problems in history migrations after import/export
           npx prisma db push
