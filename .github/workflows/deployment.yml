@@ -28,12 +28,12 @@ jobs:
       - name: Build and send image to Artifact Registry
         run: |
           docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/next-first-project/alejandrino-books:latest .
-          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/next-first-project/alejandrino-books
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/next-first-project/alejandrino-books:latest
 
       - name: Deploy on Cloud Run
         run: |
           gcloud run deploy alejandrino-books \
-            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/next-first-project/alejandrino-books \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/next-first-project/alejandrino-books:latest \
             --platform managed \
             --region us-central1 \
             --allow-unauthenticated \
