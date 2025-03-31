@@ -43,6 +43,7 @@ jobs:
       - name: Execute migrations on Cloud SQL
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DEBUG: prisma:*
         run: |
           # Install Node.js and dependencies
           curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
