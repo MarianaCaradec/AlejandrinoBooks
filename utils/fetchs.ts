@@ -4,6 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export const fetchBooks = async (page = 1, limit = 5, categoryId?: string, search?: string) => {
     try {
+        console.log('API URL:', API_URL)
         const categoryQuery = categoryId ? `&categoryId=${categoryId}` : "";
         const searchQuery = search ? `&search=${search}` : "";
 
