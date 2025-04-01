@@ -1,6 +1,6 @@
 import { BookWithCategory, CategoryWithBooks } from "@/app/lib/prisma";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+const API_URL = process.env.API_URL
 
 export const fetchBooks = async (page = 1, limit = 5, categoryId?: string, search?: string) => {
     try {
