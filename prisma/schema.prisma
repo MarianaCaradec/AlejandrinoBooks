@@ -42,29 +42,6 @@ model Order {
   orderItems  OrderItem[]
 }
 
-model User {
-  id       String @id @default(uuid())
-  name     String
-  role     Role   @default(CLIENT)
-  email    String @unique
-  password String
-  image    String @default("")
-  cart     Cart?
-  order    Order?
-}
-
-model CartItem {
-  id       String @id @default(uuid())
-  cartId   String
-  bookId   String
-  quantity Int
-  book     Book   @relation(fields: [bookId], references: [id])
-  cart     Cart   @relation(fields: [cartId], references: [id])
-
-  @@unique([cartId, bookId])
-  @@index([bookId], map: "CartItem_bookId_fkey")
-}
-
 model OrderItem {
   id       String @id @default(uuid())
   orderId  String
@@ -84,7 +61,30 @@ model Cart {
   cartItems CartItem[]
 }
 
+model CartItem {
+  id       String @id @default(uuid())
+  cartId   String
+  bookId   String
+  quantity Int
+  book     Book   @relation(fields: [bookId], references: [id])
+  cart     Cart   @relation(fields: [cartId], references: [id])
+
+  @@unique([cartId, bookId])
+  @@index([bookId], map: "CartItem_bookId_fkey")
+}
+
 enum Role {
   ADMIN
   CLIENT
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  role     Role   @default(CLIENT)
+  email    String @unique
+  password String
+  image    String @default("")
+  cart     Cart?
+  order    Order?
 }
