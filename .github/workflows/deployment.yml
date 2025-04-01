@@ -40,7 +40,7 @@ jobs:
             --service-account github-actions@${{ secrets.GCP_PROJECT }}.iam.gserviceaccount.com \
             --set-env-vars "NODE_ENV=production" \
             --set-env-vars "DATABASE_URL=${{ secrets.DATABASE_URL }}" \
-            --set-env-vars "NEXT_PUBLIC_API_URL=${{ secrets.API_URL }}" \
+            --set-env-vars "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" \
             --set-env-vars "JWT_SECRET=${{ secrets.JWT_SECRET }}" \
             --set-env-vars "BUCKET_NAME=${{ secrets.BUCKET_NAME }}" \
             --set-env-vars "BUCKET_PROFILE_IMGS_URL=${{ secrets.BUCKET_PROFILE_IMGS_URL }}"
