@@ -1,10 +1,13 @@
 import { BookWithCategory, CategoryWithBooks } from "@/app/lib/prisma";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+const API_URL = typeof window === 'undefined' 
+    ? process.env.API_URL // Server-side fallback
+    : process.env.NEXT_PUBLIC_API_URL; // Client-side variable
 
 export const fetchBooks = async (page = 1, limit = 5, categoryId?: string, search?: string) => {
     try {
         console.log('API URL:', API_URL)
+        console.log("Server-side API URL:", process.env.API_URL);
         const categoryQuery = categoryId ? `&categoryId=${categoryId}` : "";
         const searchQuery = search ? `&search=${search}` : "";
 
