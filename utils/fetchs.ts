@@ -1,17 +1,14 @@
 import { BookWithCategory, CategoryWithBooks } from "@/app/lib/prisma";
 
-// const API_URL = typeof window === 'undefined' 
-//     ? process.env.API_URL // Server-side fallback
-//     : process.env.NEXT_PUBLIC_API_URL; // Client-side variable
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export const fetchBooks = async (page = 1, limit = 5, categoryId?: string, search?: string) => {
     try {
-        // console.log('API URL:', API_URL)
-        // console.log("Server-side API URL:", process.env.API_URL);
+        console.log('API URL:', API_URL)
         const categoryQuery = categoryId ? `&categoryId=${categoryId}` : "";
         const searchQuery = search ? `&search=${search}` : "";
 
-        const res = await fetch(`/api/books?page=${page}&limit=${limit}${categoryQuery}${searchQuery}`);
+        const res = await fetch(`${API_URL}/api/books?page=${page}&limit=${limit}${categoryQuery}${searchQuery}`);
         
         const booksPagination = await res.json()
         return booksPagination
@@ -23,7 +20,7 @@ export const fetchBooks = async (page = 1, limit = 5, categoryId?: string, searc
 
 export const fetchBook = async (bookId: string): Promise<BookWithCategory | null> => {
     try {
-        const res = await fetch(`/api/books/${bookId}`);
+        const res = await fetch(`${API_URL}/api/books/${bookId}`);
         const bookFromDb: BookWithCategory = await res.json();
         return bookFromDb
     } catch (error) {
@@ -34,7 +31,7 @@ export const fetchBook = async (bookId: string): Promise<BookWithCategory | null
 
 export const fetchCategories = async (): Promise<CategoryWithBooks[] | null> => {
     try {
-        const res = await fetch(`/api/categories`);
+        const res = await fetch(`${API_URL}/api/categories`);
         const categoriesFromDb: CategoryWithBooks[] = await res.json();
         return categoriesFromDb
     } catch (error) {
@@ -45,7 +42,7 @@ export const fetchCategories = async (): Promise<CategoryWithBooks[] | null> => 
 
 export const fetchCategory = async (categoryId: string): Promise<CategoryWithBooks | null> => {
     try {
-        const res = await fetch(`/api/categories/${categoryId}`)
+        const res = await fetch(`${API_URL}/api/categories/${categoryId}`)
         const categoryFromDb: CategoryWithBooks = await res.json()
         return categoryFromDb
     } catch (error) {
@@ -56,7 +53,7 @@ export const fetchCategory = async (categoryId: string): Promise<CategoryWithBoo
 
 export const fetchAuth = async () => {
     try {
-        const res = await fetch(`/api/auth/me`, { cache: "no-store" });
+        const res = await fetch(`${API_URL}/api/auth/me`, { cache: "no-store" });
         const auth = await res.json();
 
         if (!res.ok) return { isAuthenticated: false };
