@@ -36,10 +36,10 @@ export async function login(prevState: FormState, formData: FormData): Promise<F
     const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
     const token = await new SignJWT({email, role})
     .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime('1h')
+    .setExpirationTime('2h')
     .sign(JWT_SECRET);
 
-    (await cookies()).set("token", token, {httpOnly: true, secure: true})
+    (await cookies()).set("token", token, {httpOnly: true, secure: true, path: "/"})
     return { message: "Login successful!" };
 }
 
