@@ -43,7 +43,7 @@ export function BooksProvider({ children }: { children: React.ReactNode }) {
   const pathName = usePathname();
 
   const updateUrlParams = (key: string, value: string | null) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams);
 
     if (value) {
       params.set(key, value);
@@ -100,9 +100,7 @@ export function BooksProvider({ children }: { children: React.ReactNode }) {
         default:
           break;
       }
-      setTimeout(() => {
-        updateUrlParams("page", newPage.toString());
-      }, 0);
+      updateUrlParams("page", newPage.toString());
       return newPage;
     });
   };
@@ -113,7 +111,6 @@ export function BooksProvider({ children }: { children: React.ReactNode }) {
 
   const handleSearch = (input: string) => {
     updateUrlParams("search", input || null);
-    setInputSearch(input);
   };
 
   return (
