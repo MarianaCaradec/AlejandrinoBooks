@@ -4,6 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export const fetchBooks = async (page = 1, limit = 5, categoryId?: string, search?: string) => {
     try {
+        console.log('API URL:', API_URL)
         const categoryQuery = categoryId ? `&categoryId=${categoryId}` : "";
         const searchQuery = search ? `&search=${search}` : "";
 
@@ -52,41 +53,13 @@ export const fetchCategory = async (categoryId: string): Promise<CategoryWithBoo
 
 export const fetchAuth = async () => {
     try {
-        const res = await fetch(`${API_URL}/api/auth/me`, { 
-            cache: "no-store",       
-            credentials: "include",
-            headers: {"Content-Type": "application/json",} 
-        });
-
-        if (res.status === 401) {
-            return null;
-        }
-        if (!res.ok) throw new Error("Failed to fetch user data");
-
+        const res = await fetch(`${API_URL}/api/auth/me`, { cache: "no-store" });
         const auth = await res.json();
 
-        if (!auth.user || !auth.user.id) throw new Error("User ID is missing")
+        if (!res.ok) return { isAuthenticated: false };
         
         return auth
     } catch (error) {
         console.error("Error authenticating user:", error)
-        return null
-    }
-}
-
-export const fetchCart = async () => {
-    try {
-        const res = await fetch(`${API_URL}/api/cart`, {credentials: "include"})
-
-        if (res.status === 401) {
-            return null;
-        }
-        if (!res.ok) throw new Error("Failed to fetch cart");
-
-        const cart = await res.json()
-        return cart.cartItems || []
-    } catch (error) {
-        console.error("Error fetching cart items", error)
-        return []
     }
 }
