@@ -1,6 +1,7 @@
 import { prisma } from "@/app/lib/prisma";
-import { fetchAuth } from "@/utils/fetchs";
 import { CartItem } from "@prisma/client";
+import { jwtVerify } from "jose";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -30,9 +31,40 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-        const user = await fetchAuth()
+        const token = (await cookies()).get("token")?.value;
+
+        console.log("Server-side request headers:", req.headers);
+        if(!token) {
+            console.error("No authentication token found.");
+            return NextResponse.json({isAuthenticated: false, user: null}, {status: 401})
+        }
+
+        const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
+        const {payload} = await jwtVerify<{email: string}>(token, JWT_SECRET)
+        console.log("Decoded payload:", payload);
+
+        const isTokenExpired = (exp?: number): boolean => {
+            if (!exp) return true; 
+            return Math.floor(Date.now() / 1000) > exp;
+        }  
+        
+        if (isTokenExpired(payload.exp)) {
+            return NextResponse.redirect("/login"); 
+        }
+
+        const user = await prisma.user.findUnique({
+            where: {email: payload.email},
+            select: { id: true, name: true, email: true, role: true }})
+
+        if (!user || !user.id) {
+        throw new Error("User authentication failed or user ID is missing.");
+        }
 
         const {bookId} = await req.json()
+
+        if (!bookId) {
+            throw new Error("Book ID is missing.");
+        }
 
         let cart = await prisma.cart.findUnique({
             where: { userId: user.id }
@@ -80,11 +112,21 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
     try {
-        const {itemId, quantity} = await req.json()
+        const {cartId, bookId, quantity} = await req.json()
+
+        if (!cartId || !bookId) {
+            return NextResponse.json(
+                { error: "cartId and bookId are required." },
+                { status: 400 }
+            );
+        }
 
         const updatedCartItem = prisma.cartItem.update({
             where: {
-                id: itemId
+                cartId_bookId: {
+                    cartId: cartId,
+                    bookId
+                }
             },
             data: {
                 quantity: quantity
@@ -102,11 +144,21 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
     try {
-        const {itemId} = await req.json()
+        const {cartId, bookId} = await req.json()
+
+        if (!cartId || !bookId) {
+            return NextResponse.json(
+                { error: "cartId and bookId are required." },
+                { status: 400 }
+            );
+        }
 
         const cartItemToBeDeleted = prisma.cartItem.delete({
             where: {
-                id: itemId
+                cartId_bookId: {
+                    cartId: cartId,
+                    bookId
+                }
             }
         })
 
