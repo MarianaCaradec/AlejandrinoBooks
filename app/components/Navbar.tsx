@@ -3,17 +3,9 @@ import Link from "next/link";
 import { logout } from "../actions/logout";
 import { useAuth } from "../contexts/AuthContext";
 import CartIcon from "./CartIcon";
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
 
 export default function Navbar() {
-  const { checkAuth, isAuthenticated, setIsAuthenticated, logoutHandler } =
-    useAuth();
-  const pathName = usePathname();
-
-  useEffect(() => {
-    checkAuth();
-  }, [pathName]);
+  const { isAuthenticated } = useAuth();
 
   return (
     <nav className="bg-black shadow-md p-4 flex justify-between items-center fixed top-0 left-0 w-full z-50 bg-black/70 backdrop-blur-md">
@@ -39,7 +31,7 @@ export default function Navbar() {
             </Link>
             <button
               type="submit"
-              onClick={logoutHandler}
+              onClick={logout}
               className="text-[#E4DFDA] hover:text-[#53917E]"
             >
               Log out
@@ -50,7 +42,7 @@ export default function Navbar() {
           </>
         ) : (
           <Link href="/signin" className="text-[#E4DFDA] hover:text-[#53917E]">
-            <button onClick={() => setIsAuthenticated(false)}>Sign in</button>
+            Sign in
           </Link>
         )}
       </div>
