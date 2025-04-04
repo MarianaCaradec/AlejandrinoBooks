@@ -39,7 +39,7 @@ export default function Books() {
                 alt="Book's cover"
                 className="rounded-lg"
               />
-              <p className="text-[#53917E] text-lg">{book.price.toString()}</p>
+              <p className="text-[#53917E] text-lg">{Number(book.price)}</p>
               <button
                 onClick={() => handleAddItem(book.id)}
                 disabled={!isAuthenticated}
