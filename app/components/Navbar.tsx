@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { logout } from "../actions/logout";
 import { useAuth } from "../contexts/AuthContext";
 import CartIcon from "./CartIcon";
 import { useEffect } from "react";
