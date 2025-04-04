@@ -1,81 +1,37 @@
 "use client";
-import { fetchBook, fetchCart } from "@/utils/fetchs";
 import { CartItem } from "@prisma/client";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
-interface CartItemWithBook extends CartItem {
-  bookTitle: string;
-  bookAuthor: string;
-  bookImage: string;
-  bookPrice: number;
-}
-
-interface CartItemContextType {
-  cartItems: CartItemWithBook[];
-  setCartItems: React.Dispatch<React.SetStateAction<CartItemWithBook[]>>;
+type CartItemContextType = {
+  cartItems: CartItem[];
+  setCartItems: React.Dispatch<React.SetStateAction<CartItem[]>>;
   handleAddItem: (bookId: string) => Promise<void>;
-  handleRemoveItem: (
-    cartId: string,
-    bookId: string,
-    itemId: string
-  ) => Promise<void>;
+  handleRemoveItem: (itemId: string) => Promise<void>;
   totalQuantity: number;
-}
+};
 
 const CartItemContext = createContext<CartItemContextType | undefined>(
   undefined
 );
 
 export function CartItemProvider({ children }: { children: React.ReactNode }) {
-  const [cartItems, setCartItems] = useState<CartItemWithBook[]>([]);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const data = await fetchCart();
-
-        if (data && Array.isArray(data)) {
-          const cartItemsWithBook = await Promise.all(
-            data.map(async (item: CartItem) => {
-              const book = await fetchBook(item.bookId);
-              return {
-                ...item,
-                bookTitle: book?.title || "Unknown Title",
-                bookAuthor: book?.author || "Unknown Author",
-                bookImage: book?.image || "/default-book-image.jpg",
-                bookPrice: Number(book?.price) || 0,
-              };
-            })
-          );
-
-          setCartItems(cartItemsWithBook);
-        }
-      } catch (error) {
-        console.error("Error fetching items:", error);
-        setCartItems([]);
-      }
-    };
-
-    getData();
-  }, []);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   const handleAddItem = async (bookId: string) => {
     try {
       const res = await fetch("/api/cartItem", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ bookId }),
       });
 
       if (!res.ok) {
         const errorData = await res.json();
-        console.error("Error adding the book:", errorData.error);
+        console.error("Error al agregar el libro:", errorData.error);
         return;
       }
 
       const newItem: CartItem = await res.json();
-      const book = await fetchBook(bookId);
       setCartItems((prevItems) => {
         const existingItem = prevItems?.find(
           (cartItem) => cartItem.id === newItem.id
@@ -89,31 +45,18 @@ export function CartItemProvider({ children }: { children: React.ReactNode }) {
           );
         }
 
-        return [
-          ...prevItems,
-          {
-            ...newItem,
-            bookTitle: book?.title || "Unknown Title",
-            bookAuthor: book?.author || "Unknown Author",
-            bookImage: book?.image || "/default-book-image.jpg",
-            bookPrice: Number(book?.price) || 0,
-          },
-        ];
+        return [...prevItems, newItem];
       });
     } catch (error) {
       console.error("Error fetching cart item:", error);
     }
   };
 
-  const handleRemoveItem = async (
-    cartId: string,
-    bookId: string,
-    itemId: string
-  ) => {
+  const handleRemoveItem = async (itemId: string) => {
     const res = await fetch("/api/cartItem", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cartId, bookId }),
+      body: JSON.stringify({}),
     });
 
     if (!res.ok) {
@@ -125,11 +68,10 @@ export function CartItemProvider({ children }: { children: React.ReactNode }) {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
   };
 
-  const totalQuantity = React.useMemo(() => {
-    return Array.isArray(cartItems)
-      ? cartItems.reduce((acc, items) => acc + items.quantity, 0)
-      : 0;
-  }, [cartItems]);
+  const totalQuantity = React.useMemo(
+    () => cartItems.reduce((acc, item) => acc + item.quantity, 0),
+    [cartItems]
+  );
 
   return (
     <CartItemContext.Provider
