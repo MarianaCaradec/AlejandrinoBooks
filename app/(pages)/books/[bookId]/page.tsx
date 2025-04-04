@@ -1,4 +1,6 @@
 "use client";
+import { useAuth } from "@/app/contexts/AuthContext";
+import { useCartItemContext } from "@/app/contexts/CartItemContext";
 import type { BookWithCategory } from "@/app/lib/prisma";
 import { fetchBook } from "@/utils/fetchs";
 import Image from "next/image";
@@ -11,6 +13,8 @@ export default function BookDetails({
 }) {
   const [book, setBook] = useState<BookWithCategory | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const { isAuthenticated } = useAuth();
+  const { handleAddItem } = useCartItemContext();
 
   const { bookId } = use(params);
 
@@ -52,8 +56,15 @@ export default function BookDetails({
           <p className="text-[#53917E]">Description: </p>
           <p className="text-[#E4DFDA]">{book.description}</p>
           <p className="text-lg font-bold text-[#53917E]">
-            ${book.price.toString()}
+            ${Number(book.price)}
           </p>
+          <button
+            onClick={() => handleAddItem(book.id)}
+            disabled={!isAuthenticated}
+            className="px-4 py-2 bg-[#D4B483] text-black rounded disabled:opacity-50"
+          >
+            Add to cart
+          </button>
         </div>
       ) : (
         <p className="text-red-500">No hay libros disponibles</p>
