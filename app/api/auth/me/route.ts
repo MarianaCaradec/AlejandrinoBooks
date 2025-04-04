@@ -6,7 +6,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     try {
         const token = (await cookies()).get("token")?.value;
-        console.log("Server-side request headers:", req.headers);
 
         if(!token) {
             console.error("No authentication token found.");
@@ -15,7 +14,6 @@ export async function GET(req: NextRequest) {
 
         const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
         const {payload} = await jwtVerify<{email: string}>(token, JWT_SECRET)
-        console.log("Decoded payload:", payload);
 
                 const isTokenExpired = (exp?: number): boolean => {
                     if (!exp) return true;

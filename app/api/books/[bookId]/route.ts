@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import {BookWithCategory, prisma} from '@/app/lib/prisma'
 import { Decimal } from "@prisma/client/runtime/index-browser.js";
 
-// type Context = Awaited<Promise<{ params: { bookId: string } }>>
-
 export async function GET(
     req: NextRequest,
     context: { params: Promise<{ bookId: string }> }
