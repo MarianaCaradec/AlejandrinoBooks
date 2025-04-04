@@ -121,10 +121,10 @@ export async function PUT(req: NextRequest) {
             );
         }
 
-        const updatedCartItem = prisma.cartItem.update({
+        const updatedCartItem = await prisma.cartItem.update({
             where: {
                 cartId_bookId: {
-                    cartId: cartId,
+                    cartId,
                     bookId
                 }
             },
@@ -153,19 +153,51 @@ export async function DELETE(req: NextRequest) {
             );
         }
 
-        const cartItemToBeDeleted = prisma.cartItem.delete({
+        const existingItem = await prisma.cartItem.findUnique({
             where: {
                 cartId_bookId: {
-                    cartId: cartId,
+                    cartId,
                     bookId
                 }
             }
         })
 
-        return NextResponse.json({message: `The cart item from ${(await cartItemToBeDeleted).cartId} has been succesfully removed`}, {status: 200})
+        if (!existingItem) {
+            return NextResponse.json(
+                { error: "Cart item not found." },
+                { status: 404 }
+            );
+        }
+
+        if(existingItem.quantity > 1) {
+            const updatedCartItem = await prisma.cartItem.update({
+                where: {
+                    id: existingItem.id
+                },
+                data: {
+                    quantity: existingItem.quantity - 1
+                }
+            });
+
+            return NextResponse.json(
+                { message: `The quantity of the cart item has been reduced to ${updatedCartItem.quantity}.` },
+                { status: 200 }
+            );
+        } else {
+            await prisma.cartItem.delete({
+                where: {
+                    id: existingItem.id
+                }
+            });
+
+            return NextResponse.json(
+                { message: "The cart item has been successfully removed." },
+                { status: 200 }
+            );
+        }
     } catch (error) {
         return NextResponse.json(
-            { error: error instanceof Error ? error.message : "Couldn't remove the cart item" },
+            { error: error instanceof Error ? error.message : "Couldn't change quantity or remove the cart item" },
             {status: 500}
         )
     }
