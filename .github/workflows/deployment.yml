@@ -34,12 +34,14 @@ jobs:
         run: |
           gcloud run deploy alejandrino-books \
             --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/next-first-project/alejandrino-books:latest \
+            --add-cloudsql-instances ${{secrets.INSTANCE_CONNECTION_NAME}} \
             --platform managed \
             --region us-central1 \
             --allow-unauthenticated \
             --service-account github-actions@${{ secrets.GCP_PROJECT }}.iam.gserviceaccount.com \
             --set-env-vars "NODE_ENV=production" \
             --set-env-vars "DATABASE_URL=${{ secrets.DATABASE_URL }}" \
+            --set-env-vars "INSTANCE_CONNECTION_NAME=${{ secrets.INSTANCE_CONNECTION_NAME }}" \
             --set-env-vars "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" \
             --set-env-vars "JWT_SECRET=${{ secrets.JWT_SECRET }}" \
             --set-env-vars "BUCKET_NAME=${{ secrets.BUCKET_NAME }}" \
