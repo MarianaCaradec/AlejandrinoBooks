@@ -36,6 +36,8 @@ jobs:
             --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/next-first-project/alejandrino-books:latest \
             --add-cloudsql-instances ${{secrets.INSTANCE_CONNECTION_NAME}} \
             --platform managed \
+            --vpc-connector ${{secrets.VPC_CONNECTOR_NAME}} \
+            --vpc-egress all \
             --region us-central1 \
             --allow-unauthenticated \
             --service-account github-actions@${{ secrets.GCP_PROJECT }}.iam.gserviceaccount.com \
