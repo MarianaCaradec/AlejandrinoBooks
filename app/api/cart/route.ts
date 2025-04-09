@@ -1,4 +1,5 @@
 import { prisma } from "@/app/lib/prisma";
+import { DatabaseError } from "@/errorHandler";
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -44,7 +45,7 @@ export async function GET(req: NextRequest) {
         })
 
         if (!cart) {
-            return NextResponse.json({ items: [] }, { status: 200 }); 
+            throw new DatabaseError("Cart not found.");
         }
 
         return NextResponse.json({ cartItems: cart.cartItems }, { status: 200 });

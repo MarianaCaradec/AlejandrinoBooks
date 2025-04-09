@@ -26,6 +26,13 @@ export class NotFoundError extends Error {
     }
 }
 
+export class RedirectionError extends Error {
+    constructor(message = "Redirection error") {
+        super(message)
+        this.name = "RedirectionError"
+    }
+}
+
 interface ErrorResponse {
     message: string;
     statusCode: number;
@@ -62,6 +69,14 @@ export function handleError(error: unknown): ErrorResponse {
         return {
             message: `Resource not found: ${error.message}`,
             statusCode: 404,
+        }
+    }
+
+    if (error instanceof RedirectionError) {
+        console.warn(`Redirection error: ${error.message}`, {error});
+        return {
+            message: `Couldn't redirect: ${error.message}`,
+            statusCode: 302,
         }
     }
 

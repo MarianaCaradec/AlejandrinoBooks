@@ -1,5 +1,6 @@
 "use client";
 import { useBooks } from "@/app/contexts/BooksContext";
+import { DatabaseError } from "@/errorHandler";
 import { Book } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/index-browser.js";
 import Image from "next/image";
@@ -45,9 +46,7 @@ const AdminPage = () => {
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
-        console.error("Error al agregar el libro:", errorData.error);
-        return;
+        throw new DatabaseError();
       }
 
       const data = await res.json();
@@ -69,9 +68,7 @@ const AdminPage = () => {
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
-        console.error("Error al eliminar el libro:", errorData.error);
-        return;
+        throw new DatabaseError("Error al eliminar el libro:");
       }
 
       setBooks((prevBooks) => prevBooks.filter((b) => b.id !== bookId));
