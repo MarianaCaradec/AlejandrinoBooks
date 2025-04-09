@@ -1,14 +1,9 @@
 "use client";
+import { DatabaseError, RedirectionError } from "@/errorHandler";
 import { fetchBook, fetchCart } from "@/utils/fetchs";
 import { CartItem } from "@prisma/client";
 import React, { createContext, useContext, useEffect, useState } from "react";
-
-interface CartItemWithBook extends CartItem {
-  bookTitle: string;
-  bookAuthor: string;
-  bookImage: string;
-  bookPrice: number;
-}
+import { CartItemWithBook, OrderItemWithBook } from "../lib/prisma";
 
 interface CartItemContextType {
   cartItems: CartItemWithBook[];
@@ -18,6 +13,10 @@ interface CartItemContextType {
     cartId: string,
     bookId: string,
     itemId: string
+  ) => Promise<void>;
+  handlePayItems: (
+    userId: string,
+    orderItems: OrderItemWithBook[]
   ) => Promise<void>;
   totalQuantity: number;
 }
@@ -68,13 +67,10 @@ export function CartItemProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ bookId }),
       });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        console.error("Error adding the book:", errorData.error);
-        return;
-      }
+      if (!res.ok) throw new DatabaseError("Error adding the book:");
 
       const newItem: CartItem = await res.json();
+
       const book = await fetchBook(bookId);
       setCartItems((prevItems) => {
         const existingItem = prevItems?.find(
@@ -116,11 +112,7 @@ export function CartItemProvider({ children }: { children: React.ReactNode }) {
       body: JSON.stringify({ cartId, bookId }),
     });
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      console.error("Couldn't remove the book:", errorData.error);
-      return;
-    }
+    if (!res.ok) throw new DatabaseError("Couldn't remove the book:");
 
     setCartItems((prevItems) =>
       prevItems
@@ -129,6 +121,41 @@ export function CartItemProvider({ children }: { children: React.ReactNode }) {
         )
         .filter((item) => item.quantity > 0)
     );
+  };
+
+  const handlePayItems = async (
+    userId: string,
+    orderItems: OrderItemWithBook[]
+  ) => {
+    if (!userId) throw new DatabaseError("Missing userId.");
+
+    if (!orderItems || orderItems.length === 0)
+      throw new DatabaseError("OrderItems array is empty.");
+
+    const paymentRes = await fetch("/api/payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ userId, orderItems }),
+    });
+
+    if (!paymentRes.ok) throw new DatabaseError("Couldn't do the payment:");
+
+    const paymentData = await paymentRes.json();
+
+    if (paymentData && paymentData.init_point) {
+      window.location.href = paymentData.init_point;
+    } else {
+      throw new RedirectionError("Payment link not generated");
+    }
+
+    // const res = await fetch("/api/cartItem", {
+    //   method: "DELETE",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ cartId, bookId }),
+    // });
+
+    // if (!res.ok) throw new DatabaseError("Couldn't remove the book:");
   };
 
   const totalQuantity = React.useMemo(() => {
@@ -144,6 +171,7 @@ export function CartItemProvider({ children }: { children: React.ReactNode }) {
         setCartItems,
         handleAddItem,
         handleRemoveItem,
+        handlePayItems,
         totalQuantity,
       }}
     >
