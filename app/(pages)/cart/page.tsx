@@ -1,10 +1,23 @@
 "use client";
-
+import { useAuth } from "@/app/contexts/AuthContext";
 import { useCartItemContext } from "@/app/contexts/CartItemContext";
+import { OrderItemWithBook } from "@/app/lib/prisma";
+
 import Image from "next/image";
 
 export default function page() {
-  const { cartItems, totalQuantity, handleRemoveItem } = useCartItemContext();
+  const { cartItems, totalQuantity, handleRemoveItem, handlePayItems } =
+    useCartItemContext();
+  const { user } = useAuth();
+  const userId = user ? user.id : "";
+  const orderItems: OrderItemWithBook[] = cartItems.map((item) => ({
+    bookId: item.bookId,
+    quantity: item.quantity,
+    bookTitle: item.bookTitle,
+    bookAuthor: item.bookAuthor,
+    bookImage: item.bookImage,
+    bookPrice: Number(item.bookPrice),
+  }));
 
   return (
     <div className="max-w-4xl mx-auto p-6 py-20">
@@ -56,6 +69,12 @@ export default function page() {
               <h2 className="text-2xl font-bold">
                 Total Items: {totalQuantity}
               </h2>
+              <button
+                onClick={() => handlePayItems(userId, orderItems)}
+                className="bg-[#53917E] text-black font-bold px-4 py-2 rounded-md hover:bg-green-600 transition mt-4"
+              >
+                Buy
+              </button>
             </div>
           </div>
         ) : (

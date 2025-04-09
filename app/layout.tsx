@@ -33,15 +33,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Suspense fallback={<div>Loading...</div>}>
-          <AuthProvider>
-            <CartItemProvider>
+          <CartItemProvider>
+            <AuthProvider>
               <BooksProvider>
                 <Navbar />
 
                 <main className="relative">{children}</main>
               </BooksProvider>
-            </CartItemProvider>
-          </AuthProvider>
+            </AuthProvider>
+          </CartItemProvider>
         </Suspense>
       </body>
     </html>

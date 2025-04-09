@@ -3,6 +3,8 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { fetchAuth } from "@/utils/fetchs";
 import { User } from "@prisma/client";
 import { logout } from "../actions/logout";
+import { useCartItemContext } from "./CartItemContext";
+import { prisma } from "../lib/prisma";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -19,6 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const hasCheckedAuth = useRef(false);
+  const { setCartItems } = useCartItemContext();
 
   const checkAuth = async () => {
     try {
@@ -41,10 +44,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const logoutHandler = () => {
+  const logoutHandler = async () => {
     logout();
     setIsAuthenticated(false);
     setUser(null);
+
+    if (user && user.id) {
+      const cart = await prisma.cart.findUnique({
+        where: { userId: user.id },
+        include: { cartItems: true },
+      });
+
+      if (cart && cart.cartItems.length > 0) {
+        await Promise.all(
+          cart.cartItems.map(async (item) => {
+            await prisma.book.update({
+              where: { id: item.bookId },
+              data: { stock: { increment: item.quantity } },
+            });
+          })
+        );
+
+        await prisma.cartItem.deleteMany({
+          where: { cartId: cart.id },
+        });
+
+        await prisma.cart.delete({
+          where: { id: cart.id },
+        });
+      }
+
+      setCartItems([]);
+    }
   };
 
   return (
