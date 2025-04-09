@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import { SignJWT } from "jose";
 import { prisma } from '../lib/prisma'
 import { cookies } from 'next/headers';
+import { UserInputError } from '@/errorHandler';
 
 export async function login(prevState: FormState, formData: FormData): Promise<FormState> {
     const validatedFields = LogInFormSchema.safeParse({
@@ -22,13 +23,14 @@ export async function login(prevState: FormState, formData: FormData): Promise<F
     const user = await prisma.user.findUnique({where: {email}})
 
     if (!user) {
-        return {message: "Email does not exist"}
+        throw new UserInputError('User not found')
     }
 
     const validPassword = await bcrypt.compare(password, user.password)
 
     if (!validPassword) {
-        return {message: 'Incorrect password'}
+        throw new UserInputError()
+
     }
 
     const role = user.role
