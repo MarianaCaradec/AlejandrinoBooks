@@ -66,6 +66,15 @@ export async function POST(req: NextRequest) {
             throw new Error("Book ID is missing.");
         }
 
+        const book = await prisma.book.findUnique({
+            where: { id: bookId }
+        })
+
+        if (!book || book.stock <= 0) {
+            throw new Error("The book is out of stock.");
+        }
+
+
         let cart = await prisma.cart.findUnique({
             where: { userId: user.id }
         })
@@ -100,6 +109,12 @@ export async function POST(req: NextRequest) {
                 }
             })
         }
+
+        await prisma.book.update({
+            where: { id: bookId },
+            data: { stock: book.stock - 1 }
+
+        })
 
         return NextResponse.json(newCartItem, {status: 201})
     } catch (error) {
