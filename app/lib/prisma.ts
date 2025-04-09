@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { CartItem, Prisma, PrismaClient } from "@prisma/client";
 
 const globalForPrisma = global as unknown as { prisma?: PrismaClient };
 
@@ -13,3 +13,19 @@ export type BookWithCategory = Prisma.BookGetPayload<{
 export type CategoryWithBooks = Prisma.CategoryGetPayload<{
     include: { books: true }
 }>;
+
+export interface CartItemWithBook extends CartItem {
+  bookTitle: string;
+  bookAuthor: string;
+  bookImage: string;
+  bookPrice: number;
+}
+
+export interface OrderItemWithBook {
+  bookId: string;
+  quantity: number;
+  bookTitle: string;
+  bookAuthor: string;
+  bookImage: string;
+  bookPrice: number;
+}
