@@ -12,7 +12,7 @@ interface AuthContextType {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   checkAuth: () => Promise<void>;
-  logoutHandler: () => void;
+  logoutHandler: (userId: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -44,7 +44,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const logoutHandler = async () => {
+  const logoutHandler = async (userId: string) => {
+    await fetch("/api/payment", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId }),
+    });
+
+    console.log("Pending order deleted before logout.");
+
     logout();
     setIsAuthenticated(false);
     setUser(null);

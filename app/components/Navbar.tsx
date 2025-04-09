@@ -6,8 +6,14 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
-  const { checkAuth, isAuthenticated, setIsAuthenticated, logoutHandler } =
-    useAuth();
+  const {
+    user,
+    checkAuth,
+    isAuthenticated,
+    setIsAuthenticated,
+    logoutHandler,
+  } = useAuth();
+  const userId = user ? user.id : "";
   const pathName = usePathname();
 
   useEffect(() => {
@@ -38,7 +44,7 @@ export default function Navbar() {
             </Link>
             <button
               type="submit"
-              onClick={logoutHandler}
+              onClick={() => logoutHandler(userId)}
               className="text-[#E4DFDA] hover:text-[#53917E]"
             >
               Log out
