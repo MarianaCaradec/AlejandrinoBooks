@@ -46,6 +46,8 @@ jobs:
             --set-env-vars "JWT_SECRET=${{ secrets.JWT_SECRET }}" \
             --set-env-vars "BUCKET_NAME=${{ secrets.BUCKET_NAME }}" \
             --set-env-vars "BUCKET_PROFILE_IMGS_URL=${{ secrets.BUCKET_PROFILE_IMGS_URL }}"
+            --set-env-vars "MERCADO_PAGO_PUBLIC_KEY=${{ secrets.MERCADO_PAGO_PUBLIC_KEY }}" \
+            --set-env-vars "MERCADO_PAGO_ACCESS_TOKEN=${{ secrets.MERCADO_PAGO_ACCESS_TOKEN }}" \
 
       - name: Execute migrations on Cloud SQL
         env:
