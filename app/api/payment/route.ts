@@ -1,8 +1,9 @@
 import { OrderItemWithBook, prisma } from '@/app/lib/prisma';
 import mercadopago from '../../../utils/mercadoPago';
-import { Preference } from 'mercadopago';
+import { Payment, Preference } from 'mercadopago';
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseError } from '@/errorHandler';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(req: NextRequest) {
   try {
@@ -69,6 +70,55 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ init_point: preference.init_point }, { status: 200 });  
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, {status: 500});
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const { orderId, paymentId, status } = await request.json();
+  
+    if (!orderId || !paymentId || !status) {
+      return NextResponse.json(
+        { error: "Missing required fields (orderId, paymentId, or status)." },
+        { status: 400 }
+      );
+    }
+
+  const payment = await new Payment(mercadopago).get({id: paymentId});
+
+  if (payment.status === "approved") {
+    const {bookId, quantity} = payment.metadata;
+
+    const book = await prisma.book.findUnique({
+      where: {id: bookId},
+    });
+
+    console.log(`The book ${book?.title} has been bought in a quantity of ${quantity}`);
+
+    await prisma.order.update({
+        where: {id: orderId},
+        data: {
+        status: "COMPLETED",
+        totalAmount: payment.transaction_amount,
+        orderItems: {
+            create: {
+            bookId,
+            quantity,
+            },
+        },
+        },
+    });
+    console.log("Notification recieived and order updated successfully.", orderId);
+    revalidatePath("/");
+  }
+
+  return new Response(null, {status: 200});
+} catch (error) {
+    console.error("Error processing payment notification:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 
