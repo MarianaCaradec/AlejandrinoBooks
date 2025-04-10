@@ -149,13 +149,7 @@ export function CartItemProvider({ children }: { children: React.ReactNode }) {
       throw new RedirectionError("Payment link not generated");
     }
 
-    // const res = await fetch("/api/cartItem", {
-    //   method: "DELETE",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ cartId, bookId }),
-    // });
-
-    // if (!res.ok) throw new DatabaseError("Couldn't remove the book:");
+    setCartItems([]);
   };
 
   const totalQuantity = React.useMemo(() => {
