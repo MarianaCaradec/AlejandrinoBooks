@@ -56,34 +56,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout();
     setIsAuthenticated(false);
     setUser(null);
-
-    if (user && user.id) {
-      const cart = await prisma.cart.findUnique({
-        where: { userId: user.id },
-        include: { cartItems: true },
-      });
-
-      if (cart && cart.cartItems.length > 0) {
-        await Promise.all(
-          cart.cartItems.map(async (item) => {
-            await prisma.book.update({
-              where: { id: item.bookId },
-              data: { stock: { increment: item.quantity } },
-            });
-          })
-        );
-
-        await prisma.cartItem.deleteMany({
-          where: { cartId: cart.id },
-        });
-
-        await prisma.cart.delete({
-          where: { id: cart.id },
-        });
-      }
-
-      setCartItems([]);
-    }
   };
 
   return (
