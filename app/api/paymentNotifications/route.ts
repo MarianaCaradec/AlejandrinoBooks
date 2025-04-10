@@ -17,6 +17,27 @@ export async function POST(request: Request) {
 
     console.log(`The book ${book?.title} has been bought in a quantity of ${quantity}`);
 
+    const order = await prisma.order.findFirst({
+      where: {
+        userId: payment.payer?.id,
+        status: "PENDING",
+      },
+    });
+
+    await prisma.order.update({
+        where: {id: order?.id},
+        data: {
+        status: "COMPLETED",
+        totalAmount: payment.transaction_amount,
+        orderItems: {
+            create: {
+            bookId,
+            quantity,
+            },
+        },
+        },
+    });
+    console.log("Notification recieived and order updated successfully.", order?.id);
     revalidatePath("/");
   }
 
