@@ -1,5 +1,6 @@
 import { prisma } from "@/app/lib/prisma";
 import { DatabaseError } from "@/errorHandler";
+import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
     try {
@@ -7,7 +8,7 @@ export async function GET(req: Request) {
       const orderId = searchParams.get("orderId");
   
       if (!orderId) {
-        return new Response(JSON.stringify({ error: "Missing orderId." }), { status: 400 });
+        return NextResponse.json({ error: "Missing orderId." }, { status: 400 });
       }
   
       const order = await prisma.order.findUnique({
@@ -15,11 +16,14 @@ export async function GET(req: Request) {
       });
   
       if (!order) {
-        return new Response(JSON.stringify({ error: "Order not found." }), { status: 404 });
+        return NextResponse.json({ error: "Order not found." }, { status: 404 });
       }
   
-      return new Response(JSON.stringify({ status: order.status }), { status: 200 });
+      return NextResponse.json({ status: order.status }, { status: 200 });
     } catch (error) {
-      return new DatabaseError();
+      return NextResponse.json(
+            { error: "Internal Server Error" },
+            { status: 500 }
+          );
     }
   }
