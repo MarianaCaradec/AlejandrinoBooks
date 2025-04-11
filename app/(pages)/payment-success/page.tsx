@@ -12,7 +12,7 @@ const page = () => {
 
     if (paymentId) {
       const payment = await fetch(
-        `/api/payment/status?paymentId=${paymentId}`,
+        `/api/payment/status?payment_id=${paymentId}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
