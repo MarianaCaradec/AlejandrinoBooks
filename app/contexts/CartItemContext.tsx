@@ -145,7 +145,6 @@ export function CartItemProvider({ children }: { children: React.ReactNode }) {
 
     if (paymentData && paymentData.init_point) {
       window.location.href = paymentData.init_point;
-      setCartItems([]);
     } else {
       throw new RedirectionError("Payment link not generated");
     }
