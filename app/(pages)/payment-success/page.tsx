@@ -1,3 +1,4 @@
+"use client";
 import { useCartItemContext } from "@/app/contexts/CartItemContext";
 import Link from "next/link";
 import { useEffect } from "react";
