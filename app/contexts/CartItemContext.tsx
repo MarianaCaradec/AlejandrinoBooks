@@ -145,11 +145,60 @@ export function CartItemProvider({ children }: { children: React.ReactNode }) {
 
     if (paymentData && paymentData.init_point) {
       window.location.href = paymentData.init_point;
+      pollPaymentStatus(paymentData.orderId);
     } else {
       throw new RedirectionError("Payment link not generated");
     }
+  };
 
-    setCartItems([]);
+  const pollPaymentStatus = async (
+    orderId: string,
+    maxAttempts: number = 10,
+    interval: number = 5000
+  ) => {
+    let attempts = 0;
+
+    const checkStatus = async () => {
+      attempts++;
+      console.log(`Polling attempt ${attempts}...`);
+
+      const res = await fetch(`/api/payment/status?orderId=${orderId}`);
+      const data = await res.json();
+
+      if (data.status === "COMPLETED") {
+        console.log("Payment completed!");
+
+        const updateRes = await fetch("/api/payment", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ orderId, status: "COMPLETED" }),
+        });
+
+        if (!updateRes.ok) {
+          const errorData = await updateRes.json();
+          throw new Error(
+            `Failed to update order: ${errorData.error || "Unknown error"}`
+          );
+        }
+
+        console.log("Order status updated successfully.");
+
+        setCartItems([]);
+        window.location.href = "/";
+        return true;
+      }
+
+      if (attempts >= maxAttempts) {
+        console.error("Polling timed out.");
+        throw new Error("Payment not completed.");
+      }
+
+      // Retry after interval
+      setTimeout(checkStatus, interval);
+    };
+
+    checkStatus();
   };
 
   const totalQuantity = React.useMemo(() => {
