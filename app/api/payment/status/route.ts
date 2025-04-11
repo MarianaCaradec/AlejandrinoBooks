@@ -15,10 +15,10 @@ export async function GET(req: Request) {
       });
   
       if (!order) {
-        return new DatabaseError ("Order not found.");
+        return new Response(JSON.stringify({ error: "Order not found." }), { status: 404 });
       }
   
-      return new DatabaseError("Couldn't update the order.");
+      return new Response(JSON.stringify({ status: order.status }), { status: 200 });
     } catch (error) {
       return new DatabaseError();
     }
