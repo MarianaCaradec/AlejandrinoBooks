@@ -25,12 +25,12 @@ export async function GET(req: Request) {
 
     
     const { status, metadata, transaction_amount } = payment;
-
+    console.log("The orderId and status are: ", metadata.orderId, metadata.status);
     return new Response(
         JSON.stringify({
         status: status,
-        metadata: metadata, 
-        transaction_amount:transaction_amount,
+        orderId: metadata.orderId, 
+        transaction_amount: transaction_amount,
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
