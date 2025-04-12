@@ -19,12 +19,12 @@ const page = () => {
         }
       );
       const paymentData = await payment.json();
-
-      if (paymentData.status === "approved" && paymentData.metadata.orderId) {
+      console.log("Payment data: ", paymentData);
+      if (paymentData.status === "approved" && paymentData.orderId) {
         await fetch("/api/payment/completed", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: paymentData.metadata.orderId }),
+          body: JSON.stringify({ orderId: paymentData.orderId }),
         });
 
         setCartItems([]);
@@ -35,7 +35,9 @@ const page = () => {
   };
 
   useEffect(() => {
-    checkPaymentStatus();
+    if (window.location.search.includes("payment_id")) {
+      checkPaymentStatus();
+    }
   }, []);
 
   return (
