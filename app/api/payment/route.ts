@@ -92,14 +92,15 @@ export async function DELETE(req: NextRequest) {
 
     console.log("Deleting order items first...");
 
-    await prisma.$transaction([
-      prisma.orderItem.deleteMany({
-        where: { orderId: existingOrder.id },
-      }),
-      prisma.order.delete({
-        where: { userId },
-      }),
-    ])
+    await prisma.orderItem.deleteMany({
+      where: { orderId: existingOrder.id },
+    });
+
+    console.log("Order items deleted successfully.");
+
+    await prisma.order.delete({
+      where: { userId },
+    });
 
     console.log("Pending order deleted for user:", userId);
 
