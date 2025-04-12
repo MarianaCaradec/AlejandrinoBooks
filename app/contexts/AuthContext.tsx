@@ -45,6 +45,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logoutHandler = async (userId: string) => {
+    if (!userId) {
+      console.warn("No userId found for logout.");
+    }
+
+    await fetch("/api/payment", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId }),
+    });
+
     await fetch("/api/cart", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
