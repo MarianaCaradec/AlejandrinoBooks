@@ -29,7 +29,7 @@ export async function GET(req: Request) {
     return new Response(
         JSON.stringify({
         status: status,
-        orderId: metadata.orderId, 
+        orderId: metadata ? metadata.orderId : null, 
         transaction_amount: transaction_amount,
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }

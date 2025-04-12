@@ -65,7 +65,9 @@ export async function POST(req: NextRequest) {
         },
       });
 console.log("Preference created successfully:", preference.metadata.orderId);
-    return NextResponse.json({ init_point: preference.init_point }, { status: 200 });  
+    return NextResponse.json({
+      orderId: preference.metadata.orderId, 
+      init_point: preference.init_point }, { status: 200 });  
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, {status: 500});
   }
