@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
     try {
       const { orderId } = await req.json();
-  
+  console.log("completed: ", orderId)
       if (!orderId) {
         return NextResponse.json({ error: "Missing orderId." }, { status: 400 });
       }

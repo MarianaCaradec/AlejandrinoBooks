@@ -1,15 +1,13 @@
 import { OrderItemWithBook, prisma } from '@/app/lib/prisma';
 import mercadopago from '../../../utils/mercadoPago';
-import { Payment, Preference } from 'mercadopago';
+import { Preference } from 'mercadopago';
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseError } from '@/errorHandler';
-import { revalidatePath } from 'next/cache';
 
 export async function POST(req: NextRequest) {
   try {
     const {userId, orderItems} = await req.json();
-    console.log("Incoming data:", { userId, orderItems });
-    console.log("Environment variables:", process.env.MERCADOPAGO_PUBLIC_KEY, process.env.MERCADOPAGO_ACCESS_TOKEN);
+
     if (!userId) throw new DatabaseError("Missing userId.");
     
     if (!orderItems || orderItems.length === 0) throw new DatabaseError("OrderItems array is empty.");
@@ -24,13 +22,9 @@ export async function POST(req: NextRequest) {
     });
 
     if (existingOrder) {
-      console.error("User already has a pending order:", existingOrder);
       return NextResponse.json({ error: "You already have a pending order." }, { status: 400 });
     }
 
-    console.log("No existing pending orders, creating new order...");
-
-      
       const order = await prisma.order.create({
         data: {
           userId,
@@ -45,9 +39,6 @@ export async function POST(req: NextRequest) {
         },
         include: { orderItems: true },
       });
-    
-      console.log("Order created successfully:", order);
-      console.log("Creating Mercado Pago preference...");
 
       const preference = await new Preference(mercadopago).create({
         body: {
@@ -73,9 +64,7 @@ export async function POST(req: NextRequest) {
           auto_return: "approved",
         },
       });
-      console.log("Preference created successfully:", preference);
-
-
+console.log("Preference created successfully:", preference.metadata.orderId);
     return NextResponse.json({ init_point: preference.init_point }, { status: 200 });  
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, {status: 500});
