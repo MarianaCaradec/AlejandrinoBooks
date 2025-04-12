@@ -9,16 +9,16 @@ const page = () => {
   const checkPaymentStatus = async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentId = urlParams.get("payment_id");
-    const orderId = urlParams.get("order_id");
+    const urlOrderId = urlParams.get("order_id");
 
-    if (!orderId) {
+    if (!urlOrderId) {
       console.error("Order ID is missing from the URL.");
       return;
     }
 
     if (paymentId) {
       const payment = await fetch(
-        `/api/payment/status?payment_id=${paymentId}&order_id=${orderId}`,
+        `/api/payment/status?payment_id=${paymentId}&order_id=${urlOrderId}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -26,11 +26,14 @@ const page = () => {
       );
       const paymentData = await payment.json();
       console.log("Payment data: ", paymentData);
+
+      const finalOrderId = paymentData.orderId ?? urlOrderId;
+
       if (paymentData.status === "approved" && paymentData.orderId) {
         await fetch("/api/payment/completed", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: paymentData.orderId }),
+          body: JSON.stringify({ orderId: finalOrderId }),
         });
 
         setCartItems([]);
