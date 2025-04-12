@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
           },
           notification_url: "https://alejandrino-books-257954971394.us-central1.run.app/api/payment/notifications",
           back_urls: {
-              success: `https://alejandrino-books-257954971394.us-central1.run.app/payment-success?&order_id=${order.id}`
+              success: `https://alejandrino-books-257954971394.us-central1.run.app/payment-success?order_id=${order.id}`
           },
           auto_return: "approved",
         },
