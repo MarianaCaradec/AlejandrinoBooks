@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 const page = () => {
-  const { user } = useAuth();
-  const userId = user ? user.id : "";
-
   const { setCartItems } = useCartItemContext();
 
   const checkPaymentStatus = async () => {
+    const { user } = useAuth();
+    const userId = user ? user.id : "";
+
     const urlParams = new URLSearchParams(window.location.search);
     const paymentId = urlParams.get("payment_id");
     const orderId = urlParams.get("order_id");
@@ -36,6 +36,12 @@ const page = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ orderId }),
+        });
+
+        await fetch("/api/payment", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
         });
 
         await fetch("/api/cart", {
