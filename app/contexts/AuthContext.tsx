@@ -51,7 +51,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       body: JSON.stringify({ userId }),
     });
 
-    console.log("Pending order deleted before logout.");
+    await fetch("/api/cart", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId }),
+    });
+
+    setCartItems([]);
+
+    console.log("Pending order and cart items deleted before logout.");
 
     logout();
     setIsAuthenticated(false);
