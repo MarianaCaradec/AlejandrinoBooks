@@ -56,3 +56,44 @@ export async function GET(req: NextRequest) {
         )
     }
 }
+
+export async function DELETE(req: Request) {
+    try {
+      const { userId } = await req.json(); 
+  
+      if (!userId) {
+        return new Response(
+          JSON.stringify({ error: "Missing userId." }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const userCart = await prisma.cart.findUnique({
+        where: { userId },
+      });
+  
+      if (!userCart) {
+        console.error("No cart found for user:", userId);
+        return new Response(
+          JSON.stringify({ error: "No cart found for this user." }),
+          { status: 404, headers: { "Content-Type": "application/json" } }
+        );
+      }
+  
+      await prisma.cartItem.deleteMany({
+        where: { cartId: userCart.id },
+      });
+  
+      console.log("Cart items removed successfully for cartId:", userCart.id);
+      return new Response(
+        JSON.stringify({ message: "Cart cleared successfully." }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+      return new Response(
+        JSON.stringify({ error: "Internal Server Error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }

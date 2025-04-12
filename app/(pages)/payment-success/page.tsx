@@ -1,9 +1,13 @@
 "use client";
+import { useAuth } from "@/app/contexts/AuthContext";
 import { useCartItemContext } from "@/app/contexts/CartItemContext";
 import Link from "next/link";
 import { useEffect } from "react";
 
 const page = () => {
+  const { user } = useAuth();
+  const userId = user ? user.id : "";
+
   const { setCartItems } = useCartItemContext();
 
   const checkPaymentStatus = async () => {
@@ -34,6 +38,12 @@ const page = () => {
           body: JSON.stringify({ orderId }),
         });
 
+        await fetch("/api/cart", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
+        });
+
         setCartItems([]);
       } else {
         console.log("Payment not approved yet or failed.");
@@ -48,13 +58,15 @@ const page = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Payment Success</h1>
-      <p>Your payment was successful!</p>
-      <p>Thank you for your purchase.</p>
+    <div className="max-w-4xl mx-auto py-20">
+      <h1 className="text-3xl font-bold text-[#D4B483] mb-6">
+        Payment Success
+      </h1>
+      <p className="text-[#E4DFDA]">Your payment was successful!</p>
+      <p className="text-[#E4DFDA]">Thank you for your purchase.</p>
       <Link
         href={"/"}
-        className="bg-[#53917E] text-black font-bold px-4 py-2 rounded-md hover:bg-red-600 transition"
+        className="bg-[#53917E] text-black font-bold px-4 py-2 rounded-md hover:bg-[#D4B483] transition"
       >
         Go back to landing page
       </Link>
