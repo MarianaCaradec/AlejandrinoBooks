@@ -30,7 +30,7 @@ const page = () => {
         await fetch("/api/payment/completed", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: orderId }),
+          body: JSON.stringify({ orderId: paymentData.orderId }),
         });
 
         setCartItems([]);
