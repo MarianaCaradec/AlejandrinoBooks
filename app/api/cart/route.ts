@@ -71,7 +71,7 @@ export async function DELETE(req: Request) {
       const userCart = await prisma.cart.findUnique({
         where: { userId },
       });
-  
+
       if (!userCart) {
         console.error("No cart found for user:", userId);
         return new Response(
@@ -79,10 +79,15 @@ export async function DELETE(req: Request) {
           { status: 404, headers: { "Content-Type": "application/json" } }
         );
       }
-  
-      await prisma.cartItem.deleteMany({
-        where: { cartId: userCart.id },
-      });
+
+      await prisma.$transaction([
+        prisma.cartItem.deleteMany({
+          where: { cartId: userCart.id }
+        }),
+        prisma.cart.delete({
+          where: { userId }
+        })
+      ])
   
       console.log("Cart items removed successfully for cartId:", userCart.id);
       return new Response(
