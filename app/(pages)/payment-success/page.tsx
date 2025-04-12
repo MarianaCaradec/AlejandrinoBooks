@@ -5,12 +5,11 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 const page = () => {
+  const { user } = useAuth();
+  const userId = user ? user.id : "";
   const { setCartItems } = useCartItemContext();
 
   const checkPaymentStatus = async () => {
-    const { user } = useAuth();
-    const userId = user ? user.id : "";
-
     const urlParams = new URLSearchParams(window.location.search);
     const paymentId = urlParams.get("payment_id");
     const orderId = urlParams.get("order_id");
