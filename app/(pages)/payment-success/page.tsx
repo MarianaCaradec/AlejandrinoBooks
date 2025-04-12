@@ -20,7 +20,7 @@ const page = () => {
       );
       const paymentData = await payment.json();
 
-      if (paymentData.status === "approved") {
+      if (paymentData.status === "approved" && paymentData.metadata.orderId) {
         await fetch("/api/payment/completed", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
