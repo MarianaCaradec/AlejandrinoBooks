@@ -45,12 +45,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logoutHandler = async (userId: string) => {
-    await fetch("/api/payment", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId }),
-    });
-
     await fetch("/api/cart", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
