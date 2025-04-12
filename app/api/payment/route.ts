@@ -17,14 +17,6 @@ export async function POST(req: NextRequest) {
       0
     );
 
-    const existingOrder = await prisma.order.findFirst({
-      where: { userId, status: "PENDING" },
-    });
-
-    if (existingOrder) {
-      return NextResponse.json({ error: "You already have a pending order." }, { status: 400 });
-    }
-
       const order = await prisma.order.create({
         data: {
           userId,
@@ -98,7 +90,7 @@ export async function DELETE(req: NextRequest) {
 
     console.log("Order items deleted successfully.");
 
-    await prisma.order.delete({
+    await prisma.order.deleteMany({
       where: { userId },
     });
 

@@ -35,7 +35,7 @@ model Category {
 
 model Order {
   id          String      @id @default(uuid())
-  userId      String      @unique
+  userId      String
   totalAmount Float
   status      String
   user        User        @relation(fields: [userId], references: [id], map: "Order_userId_fkey")
@@ -79,12 +79,12 @@ enum Role {
 }
 
 model User {
-  id       String @id @default(uuid())
+  id       String  @id @default(uuid())
   name     String
-  role     Role   @default(CLIENT)
-  email    String @unique
+  role     Role    @default(CLIENT)
+  email    String  @unique
   password String
-  image    String @default("")
+  image    String  @default("")
   cart     Cart?
-  order    Order?
+  orders   Order[]
 }
